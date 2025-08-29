@@ -1,7 +1,6 @@
-package minijavaCompiler;
-
 import java.io.*;
 import java.util.ArrayList;
+
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
