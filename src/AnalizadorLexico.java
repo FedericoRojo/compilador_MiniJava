@@ -273,7 +273,6 @@ public class AnalizadorLexico {
             updateCurrentChar();
             return idMethodVariable();
         }else{
-
             String type = KEYWORDS.getOrDefault(lexeme, "idMetVar");
             return new Token(type, lexeme, sourceManager.getLineNumber());
         }
@@ -291,11 +290,11 @@ public class AnalizadorLexico {
 
     private Token intLiteral(int nro) throws LexicalException, IOException{
         if(Character.isDigit(currentChar)){
-            if(nro > 9){
+            updateLexeme();
+            if(nro >= 9){
                 throw new LexicalException(lexeme, sourceManager.getLineNumber(), "El numero supera el limite permitido",
                         sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
             }
-            updateLexeme();
             updateCurrentChar();
             return intLiteral(nro + 1);
         }else{
@@ -311,6 +310,10 @@ public class AnalizadorLexico {
         }else if(currentChar == sourceManager.END_OF_FILE ){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Caracter no cerrado, end of file encontrado",
                     sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+        }else if( (currentChar == '\n') || (currentChar == '\r')){
+            updateLexeme();
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Salto de linea no es un caracter válido",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
         }else{
             updateLexeme();
             updateCurrentChar();
@@ -319,9 +322,15 @@ public class AnalizadorLexico {
     }
 
     private Token charLiteral2() throws LexicalException, IOException{
-        updateLexeme();
-        updateCurrentChar();
-        return charLiteral3();
+        if( (currentChar == '\n') || (currentChar == '\r')){
+            updateLexeme();
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Salto de linea no es un caracter válido",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+        }else {
+            updateLexeme();
+            updateCurrentChar();
+            return charLiteral3();
+        }
     }
 
     private Token charLiteral3() throws LexicalException, IOException{
@@ -332,8 +341,8 @@ public class AnalizadorLexico {
         }else if(currentChar == sourceManager.END_OF_FILE ){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Caracter no cerrado, end of file encontrado",
                     sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
-        }
-        else{
+        }else{
+            updateLexeme();
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "", sourceManager.getColumnIndex(),
                     sourceManager.getCurrentLine());
         }
@@ -349,19 +358,16 @@ public class AnalizadorLexico {
             updateCurrentChar();
             return stringLiteral1();
         }else if(currentChar == '\n'){
-           int currentLineNumber = sourceManager.getLineNumber();
-           int currentColIndex = sourceManager.getColumnIndex()+1;
-           String currentLine = sourceManager.getCurrentLine();
-           updateCurrentChar();
-           throw new LexicalException(lexeme, currentLineNumber, "String incorrecto, no se permite salto de linea",
-                   currentColIndex, currentLine);
+           throw new LexicalException(lexeme, sourceManager.getLineNumber(),
+                   "String incorrecto, no se permite salto de linea",
+                   sourceManager.getColumnIndex()+1, sourceManager.getCurrentLine());
         } if(currentChar == '"'){
             updateLexeme();
             updateCurrentChar();
             return stringLiteralEnd();
         }else if(currentChar == sourceManager.END_OF_FILE){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "String no cerrado, end of file encontrado",
-                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+                    sourceManager.getColumnIndex()+1, sourceManager.getCurrentLine());
         }else {
            updateLexeme();
            updateCurrentChar();
@@ -372,10 +378,10 @@ public class AnalizadorLexico {
     private Token stringLiteral1() throws LexicalException, IOException{
         if(currentChar == sourceManager.END_OF_FILE){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "String no cerrado, end of file encontrado",
-                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+                    sourceManager.getColumnIndex()+1, sourceManager.getCurrentLine());
         }else if(currentChar == '\n'){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "String incorrecto, no se permite salto de linea",
-                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+                    sourceManager.getColumnIndex()+1, sourceManager.getCurrentLine());
         }else{
             updateLexeme();
             updateCurrentChar();
@@ -392,6 +398,7 @@ public class AnalizadorLexico {
             updateCurrentChar();
             return commentInline();
         }if(currentChar == '*'){
+            updateLexeme();
             updateCurrentChar();
             return commentMultiLine();
         }else{
@@ -413,12 +420,14 @@ public class AnalizadorLexico {
 
     private Token commentMultiLine() throws LexicalException, IOException{
         if(currentChar == '*'){
+            updateLexeme();
             updateCurrentChar();
             return commentMultiLine1();
         }else if(currentChar == sourceManager.END_OF_FILE){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Comentario multilinea no cerrado, end of file encontrado",
-                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+                    sourceManager.getColumnIndex()+1, sourceManager.getCurrentLine());
         }else{
+            updateLexeme();
             updateCurrentChar();
             return commentMultiLine();
         }
@@ -431,7 +440,7 @@ public class AnalizadorLexico {
             return start();
         }else if(currentChar == sourceManager.END_OF_FILE){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Comentario multilinea no cerrado, end of file encontrado",
-                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+                    sourceManager.getColumnIndex()+1, sourceManager.getCurrentLine());
         }else{
             return  commentMultiLine();
         }

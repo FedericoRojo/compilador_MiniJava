@@ -1,4 +1,4 @@
-///[Error:'a|6]
+///[Error:'aa|6]
 ///[Error:\|7]
 ///[Error:'|7]
 

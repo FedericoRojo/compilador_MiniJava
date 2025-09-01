@@ -9,10 +9,13 @@ public class Main {
 
     public static void main(String[] args) {
 
+
         if(args.length == 0){
             System.out.println("Falto proveer un archivo fuente");
             System.exit(1);
         }
+
+
 
         try{
             String fileName = args[0];
@@ -22,6 +25,7 @@ public class Main {
             boolean sinErrores = true;
 
             Token token = null;
+
                 do{
 
                     try {
@@ -30,12 +34,16 @@ public class Main {
                         System.out.println(token);
 
                     }catch (IOException e) {
+
                         sinErrores = false;
                         System.out.println(e.getMessage());
+
                     } catch (LexicalException e) {
+
                         sinErrores = false;
                         printError(e);
                         token = new Token("error", "error", 0);
+
                     }
 
                 }while( !token.id.equals("EOF"));
