@@ -326,10 +326,40 @@ public class AnalizadorLexico {
             updateLexeme();
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Salto de linea no es un caracter válido",
                     sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+        }if( currentChar == 'u'){
+            updateLexeme();
+            updateCurrentChar();
+            return charLiteralPossibleUnicode(1);
         }else {
             updateLexeme();
             updateCurrentChar();
             return charLiteral3();
+        }
+    }
+
+    private Token charLiteralPossibleUnicode(int nro) throws IOException, LexicalException{
+        if(currentChar == '\'' && nro == 1){
+            updateLexeme();
+            updateCurrentChar();
+            return charLiteralEnd();
+        }else if( Character.isDigit(currentChar) ||
+                  (currentChar >= 'a' && currentChar <= 'f') ||
+                  (currentChar >= 'A' && currentChar <= 'F') ){
+            updateLexeme();
+            if(nro > 4){
+                throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Unicode invalido, es muy largo",
+                        sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+            }
+            updateCurrentChar();
+            return charLiteralPossibleUnicode(nro+1);
+        }else if(currentChar == '\'' && nro == 5){
+            updateLexeme();
+            updateCurrentChar();
+            return charLiteralEnd();
+        }else{
+            updateLexeme();
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Unicode invalido",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
         }
     }
 
