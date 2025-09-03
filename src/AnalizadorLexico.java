@@ -326,6 +326,9 @@ public class AnalizadorLexico {
             updateLexeme();
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Salto de linea no es un caracter válido",
                     sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+        }else if(currentChar == sourceManager.END_OF_FILE ){
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Caracter no cerrado, end of file encontrado",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
         }if( currentChar == 'u'){
             updateLexeme();
             updateCurrentChar();
@@ -342,11 +345,20 @@ public class AnalizadorLexico {
             updateLexeme();
             updateCurrentChar();
             return charLiteralEnd();
+        }else if(currentChar == sourceManager.END_OF_FILE ){
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Caracter unicode no cerrado, end of file encontrado",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+        }else if( (currentChar == '\n') || (currentChar == '\r')){
+            updateLexeme();
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Salto de linea no es un caracter válido",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
         }else if( Character.isDigit(currentChar) ||
                   (currentChar >= 'a' && currentChar <= 'f') ||
                   (currentChar >= 'A' && currentChar <= 'F') ){
+
             updateLexeme();
             if(nro > 4){
+                updateCurrentChar();
                 throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Unicode invalido, es muy largo",
                         sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
             }
@@ -357,9 +369,8 @@ public class AnalizadorLexico {
             updateCurrentChar();
             return charLiteralEnd();
         }else{
-            updateLexeme();
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Unicode invalido",
-                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+                    sourceManager.getColumnIndex()-1, sourceManager.getCurrentLine());
         }
     }
 
@@ -370,6 +381,10 @@ public class AnalizadorLexico {
             return charLiteralEnd();
         }else if(currentChar == sourceManager.END_OF_FILE ){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Caracter no cerrado, end of file encontrado",
+                    sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
+        }else if( (currentChar == '\n') || (currentChar == '\r')){
+            updateLexeme();
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), "Salto de linea no es un caracter válido",
                     sourceManager.getColumnIndex(), sourceManager.getCurrentLine());
         }else{
             updateLexeme();
