@@ -1,4 +1,5 @@
 import exceptions.LexicalException;
+import model.Token;
 import sourcemanager.SourceManager;
 
 import java.io.IOException;
@@ -6,14 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class AnalizadorLexico {
+public class LexicAnalyzer {
 
     private static final Map<String, String> KEYWORDS = new HashMap<>();
     String lexeme;
     char currentChar;
     SourceManager sourceManager;
 
-    public AnalizadorLexico(SourceManager sm) throws IOException{
+    public LexicAnalyzer(SourceManager sm) throws IOException{
         this.sourceManager = sm;
         updateCurrentChar();
     }
