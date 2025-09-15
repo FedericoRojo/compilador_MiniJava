@@ -1,2 +1,0 @@
-///[SinErrores]
-'\uAF67'

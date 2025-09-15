@@ -20,26 +20,26 @@ public class LexicAnalyzer {
     }
 
     static {
-        KEYWORDS.put("class", "CLASS");
-        KEYWORDS.put("extends", "EXTENDS");
-        KEYWORDS.put("public", "PUBLIC");
-        KEYWORDS.put("static", "STATIC");
-        KEYWORDS.put("void", "VOID");
-        KEYWORDS.put("boolean", "BOOLEAN");
-        KEYWORDS.put("char", "CHAR");
-        KEYWORDS.put("int", "INT");
-        KEYWORDS.put("abstract", "ABSTRACT");
-        KEYWORDS.put("final", "FINAL");
-        KEYWORDS.put("if", "IF");
-        KEYWORDS.put("else", "ELSE");
-        KEYWORDS.put("while", "WHILE");
-        KEYWORDS.put("return", "RETURN");
-        KEYWORDS.put("var", "VAR");
-        KEYWORDS.put("this", "THIS");
-        KEYWORDS.put("new", "NEW");
-        KEYWORDS.put("null", "NULL");
-        KEYWORDS.put("true", "TRUE");
-        KEYWORDS.put("false", "FALSE");
+        KEYWORDS.put("class", "class");
+        KEYWORDS.put("extends", "extends");
+        KEYWORDS.put("public", "public");
+        KEYWORDS.put("static", "static");
+        KEYWORDS.put("void", "void");
+        KEYWORDS.put("boolean", "boolean");
+        KEYWORDS.put("char", "char");
+        KEYWORDS.put("int", "int");
+        KEYWORDS.put("abstract", "abstract");
+        KEYWORDS.put("final", "final");
+        KEYWORDS.put("if", "if");
+        KEYWORDS.put("else", "else");
+        KEYWORDS.put("while", "while");
+        KEYWORDS.put("return", "return");
+        KEYWORDS.put("var", "var");
+        KEYWORDS.put("this", "this");
+        KEYWORDS.put("new", "new");
+        KEYWORDS.put("null", "null");
+        KEYWORDS.put("true", "true");
+        KEYWORDS.put("false", "false");
     }
 
     public Token getNextToken() throws LexicalException, IOException{
@@ -264,7 +264,7 @@ public class LexicAnalyzer {
     }
 
     private Token end() {
-        return new Token("EOF", "EOF", sourceManager.getLineNumber());
+        return new Token("eof", "eof", sourceManager.getLineNumber());
     }
 
 

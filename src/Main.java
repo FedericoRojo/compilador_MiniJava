@@ -1,6 +1,5 @@
 import exceptions.LexicalException;
 import exceptions.SyntacticException;
-import model.Token;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
 
@@ -18,19 +17,46 @@ public class Main {
 
         try{
             String fileName = args[0];
+
+            //String fileName = "src/test/ejemplo.txt";
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
             LexicAnalyzer aLexico = new LexicAnalyzer(sourceManager);
             SyntacticAnalyzer sA = new SyntacticAnalyzer(aLexico);
+
+            sA.start();
+
+            success();
+
         }catch (IOException e) {
             System.out.println(e.getMessage());
         } catch (LexicalException e) {
-            throw new RuntimeException(e);
+            printLexError(e);
         } catch (SyntacticException e) {
-            throw new RuntimeException(e);
+            printSyntacticError(e);
         }
 
     }
 
+    public static void printLexError(LexicalException e){
+        System.out.println(e.getMessage());
+        if(!e.extraMessage.equals("")){
+            System.out.println("Detalle extra: "+e.extraMessage);
+        }
+        System.out.println(e.message);
+    }
+
+    public static void printSyntacticError(SyntacticException e){
+        System.out.println(e.message);
+        System.out.println(e.getMessage());
+    }
+
+    public static void success(){
+        System.out.println("[SinErrores]");
+    }
+
+    public static void failed(){
+        System.out.println("[ConErrores]");
+    }
 
 }

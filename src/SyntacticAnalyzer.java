@@ -16,7 +16,7 @@ class SyntacticAnalyzer {
 
     void start() throws LexicalException, SyntacticException, IOException {
         listaClases();
-        match("$");
+        match("eof");
     }
 
     void listaClases() throws LexicalException, SyntacticException, IOException {
@@ -31,7 +31,7 @@ class SyntacticAnalyzer {
     void clase() throws LexicalException, SyntacticException, IOException {
         modificadorOpcional();
         match("class");
-        match("idClase");
+        match("idClass");
         herenciaOpcional();
         match("{");
         listaMiembros();
@@ -53,13 +53,14 @@ class SyntacticAnalyzer {
     void herenciaOpcional() throws LexicalException, SyntacticException, IOException {
         if(actualToken.getId().equals("extends")){
             match("extends");
-            match("idClase");
+            match("idClass");
         }else{
 
         }
     }
 
     void listaMiembros() throws SyntacticException, LexicalException, IOException {
+
         if(Primeros.pListaMiembros.contiene(actualToken.getId())){
             miembro();
             listaMiembros();
@@ -76,7 +77,7 @@ class SyntacticAnalyzer {
         }else if(Primeros.pMetodoConModificador.contiene(actualToken.getId())){
             metodoConModificador();
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "metodoOAtributo, constructor o metodoConModificador");
         }
     }
 
@@ -86,7 +87,7 @@ class SyntacticAnalyzer {
         }else if(actualToken.getId().equals("void")){
             match("void");
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "tipo o void");
         }
     }
 
@@ -109,7 +110,7 @@ class SyntacticAnalyzer {
         }else if(actualToken.getId().equals("final")){
             match("final");
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "abstract, static o final");
         }
     }
 
@@ -123,7 +124,7 @@ class SyntacticAnalyzer {
             match("idMetVar");
             rMetodo();
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "tipo o void");
         }
     }
 
@@ -133,7 +134,7 @@ class SyntacticAnalyzer {
         }else if(actualToken.getId().equals(";")){
             match(";");
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "; o argumentos formales");
         }
     }
 
@@ -144,7 +145,7 @@ class SyntacticAnalyzer {
 
     void constructor() throws LexicalException, SyntacticException, IOException {
         match("public");
-        match("idClase");
+        match("idClass");
         argsFormales();
         bloque();
     }
@@ -152,10 +153,10 @@ class SyntacticAnalyzer {
     void tipo() throws LexicalException, SyntacticException, IOException {
         if(Primeros.pTipoPrimitivo.contiene(actualToken.getId())){
             tipoPrimitivo();
-        }else if(actualToken.getId().equals("idClase")){
-            match("idClase");
+        }else if(actualToken.getId().equals("idClass")){
+            match("idClass");
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "boolean, char, int o idClass");
         }
     }
 
@@ -167,7 +168,7 @@ class SyntacticAnalyzer {
         }else if(actualToken.getId().equals("int")){
             match("int");
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "boolean, char o int");
         }
     }
 
@@ -210,50 +211,56 @@ class SyntacticAnalyzer {
     }
 
     void bloqueOpcional() throws LexicalException, SyntacticException, IOException {
+
         if(Primeros.pBloque.contiene(actualToken.getId())){
             bloque();
+        }else if(actualToken.getId().equals(";")){
+            match(";");
         }else{
-
+            throw new SyntacticException(actualToken, "; o bloque");
         }
     }
 
     void bloque() throws LexicalException, SyntacticException, IOException {
         match("{");
+
         listaSentencias();
         match("}");
     }
 
     void listaSentencias() throws SyntacticException, LexicalException, IOException {
+
         if(Primeros.pSentencia.contiene(actualToken.getId())){
             sentencia();
             listaSentencias();
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+
         }
+
     }
-
-
-
 
 
 
     void sentencia() throws LexicalException, SyntacticException, IOException {
         if(actualToken.getId().equals(";")){
             match(";");
-        }else if(actualToken.getId().equals(";")){
+        }else if(Primeros.pAsignacionOLlamada.contiene(actualToken.getId())){
             asignacionOLlamada();
-        }else if(actualToken.getId().equals(";")){
+            match(";");
+        }else if(Primeros.pVarLocal.contiene(actualToken.getId())){
             varLocal();
-        }else if(actualToken.getId().equals(";")){
+            match(";");
+        }else if(Primeros.pReturn.contiene(actualToken.getId())){
             metReturn();
-        }else if(actualToken.getId().equals(";")){
+            match(";");
+        }else if(Primeros.pIf.contiene(actualToken.getId())){
             metIf();
-        }else if(actualToken.getId().equals(";")){
+        }else if(Primeros.pWhile.contiene(actualToken.getId())){
             metWhile();
-        }else if(actualToken.getId().equals(";")){
+        }else if(Primeros.pBloque.contiene(actualToken.getId())){
             bloque();
         } else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, ";, asignación o llamada, variable local, return, if, while o bloque");
         }
     }
 
@@ -322,14 +329,10 @@ class SyntacticAnalyzer {
     }
 
     void operadorAsignacion() throws LexicalException, SyntacticException, IOException {
-        if(actualToken.getId().equals("==")){
-            match("==");
-        }else if(actualToken.getId().equals("+=")){
-            match("+=");
-        }else if(actualToken.getId().equals("-=")){
-            match("-=");
+        if(actualToken.getId().equals("=")){
+            match("=");
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "=");
         }
     }
 
@@ -366,7 +369,7 @@ class SyntacticAnalyzer {
             case "*" -> match("*");
             case "/" -> match("/");
             case "%" -> match("%");
-            default -> throw new SyntacticException(actualToken, actualToken.getLexeme());
+            default -> throw new SyntacticException(actualToken, "operador binario");
         }
     }
 
@@ -377,7 +380,7 @@ class SyntacticAnalyzer {
         }else if(Primeros.pOperando.contiene(actualToken.getId())){
             operando();
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "operador unario u operando");
         }
     }
 
@@ -388,7 +391,7 @@ class SyntacticAnalyzer {
             case "-" -> match("-");
             case "--" -> match("--");
             case "!" -> match("!");
-            default -> throw new SyntacticException(actualToken, actualToken.getLexeme());
+            default -> throw new SyntacticException(actualToken, "operador unario");
         }
     }
 
@@ -398,7 +401,7 @@ class SyntacticAnalyzer {
         }else if(Primeros.pReferencia.contiene(actualToken.getId())){
             referencia();
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "operando");
         }
     }
 
@@ -409,7 +412,7 @@ class SyntacticAnalyzer {
             case "intLiteral" -> match("intLiteral");
             case "charLiteral" -> match("charLiteral");
             case "null" -> match("null");
-            default -> throw new SyntacticException(actualToken, actualToken.getLexeme());
+            default -> throw new SyntacticException(actualToken, "true, false, intLiteral, charLiteral o null");
         }
     }
 
@@ -434,14 +437,14 @@ class SyntacticAnalyzer {
             match("stringLiteral");
         }else if(Primeros.pAccesoVarOLlamadaMetodo.contiene(actualToken.getId())){
             accesoVarOLlamadaMetodo();
-        }else if(Primeros.pConstructor.contiene(actualToken.getId())){
+        }else if(Primeros.pLlamadaConstructor.contiene(actualToken.getId())){
             llamadaConstructor();
         }else if(Primeros.pLlamadaMetodoEstatico.contiene(actualToken.getId())){
             llamadaMetodoEstatico();
         }else if(Primeros.pExpresionParentizada.contiene(actualToken.getId())){
             expresionParentizada();
         }else{
-            throw new SyntacticException(actualToken, actualToken.getLexeme());
+            throw new SyntacticException(actualToken, "this, stringLiteral, idMetVar, new, idClass o (");
         }
     }
 
@@ -460,7 +463,7 @@ class SyntacticAnalyzer {
 
     void llamadaConstructor() throws LexicalException, SyntacticException, IOException {
         match("new");
-        match("idClase");
+        match("idClass");
         argsActuales();
     }
 
@@ -471,7 +474,7 @@ class SyntacticAnalyzer {
     }
 
     void llamadaMetodoEstatico() throws LexicalException, SyntacticException, IOException {
-        match("idClase");
+        match("idClass");
         match(".");
         match("idMetVar");
         argsActuales();
@@ -525,6 +528,7 @@ class SyntacticAnalyzer {
 
 
     void match(String tokenName) throws IOException, LexicalException, SyntacticException {
+        //System.out.println("Entre con "+actualToken.getId()+" esperaba "+tokenName);
         if(tokenName.equals(actualToken.getId())){
             actualToken = lexicAnalyzer.getNextToken();
         }else{
