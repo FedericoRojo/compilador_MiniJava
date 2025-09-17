@@ -94,7 +94,9 @@ public class LexicAnalyzer {
             return singleCharToken(".");
         }else if(currentChar == ':'){
             return singleCharToken(":");
-        }else if(currentChar == '+'){
+        }else if(currentChar == '?'){
+            return singleCharToken("?");
+        }if(currentChar == '+'){
             updateLexeme();
             updateCurrentChar();
             return possibleDoubleAdd();

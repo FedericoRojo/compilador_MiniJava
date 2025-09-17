@@ -1,8 +1,12 @@
-class E {
-    E() {}
+class Vehiculo {
+
+    int metodo1() {
+        if( (edad >= 18) ? true : false ) {
+
+        }
+    }
+
 }
-
-
 
 
 

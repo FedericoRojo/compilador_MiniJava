@@ -319,6 +319,18 @@ class SyntacticAnalyzer {
         expresionConAsignacion();
     }
 
+    //Logro expresion ternaria
+    void expresionTernaria() throws LexicalException, SyntacticException, IOException {
+        if(actualToken.getId().equals("?")){
+            match("?");
+            expresionCompuesta();
+            match(":");
+            expresionCompuesta();
+        }else{
+
+        }
+    }
+
     void expresionConAsignacion() throws LexicalException, SyntacticException, IOException {
         if(Primeros.pOperadorAsignacion.contiene(actualToken.getId())){
             operadorAsignacion();
@@ -337,18 +349,28 @@ class SyntacticAnalyzer {
     }
 
     void expresionCompuesta() throws LexicalException, SyntacticException, IOException {
-        rExpresionBasicaConExpresionCompuesta();
+        expresionBinaria();
+        expresionTernaria();
     }
 
-    void rExpresionBasicaConExpresionCompuesta() throws LexicalException, SyntacticException, IOException {
+    void expresionBinaria() throws LexicalException, SyntacticException, IOException {
         expresionBasica();
-        rExpresionCompuesta();
+        rExpresionBinaria();
+    }
+
+    void rExpresionBinaria() throws LexicalException, SyntacticException, IOException {
+        if(Primeros.pOperadorBinario.contiene(actualToken.getId())){
+            operadorBinario();
+            expresionBinaria();
+        }else{
+
+        }
     }
 
     void rExpresionCompuesta() throws LexicalException, SyntacticException, IOException {
         if(Primeros.pOperadorBinario.contiene(actualToken.getId())){
             operadorBinario();
-            rExpresionBasicaConExpresionCompuesta();
+            expresionCompuesta();
         }else{
 
         }
@@ -495,10 +517,6 @@ class SyntacticAnalyzer {
     }
 
     void listaExps() throws LexicalException, SyntacticException, IOException {
-        rExpresionRListaExps();
-    }
-
-    void rExpresionRListaExps() throws LexicalException, SyntacticException, IOException {
         expresion();
         rListaExps();
     }
@@ -506,7 +524,7 @@ class SyntacticAnalyzer {
     void rListaExps() throws LexicalException, SyntacticException, IOException {
         if(actualToken.getId().equals(",")){
             match(",");
-            rExpresionRListaExps();
+            listaExps();
         }else{
 
         }

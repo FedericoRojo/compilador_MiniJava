@@ -1,60 +1,24 @@
 ///[SinErrores]
 
-class Vehiculo {
-    int velocidad;
-    boolean encendido;
+class OperadorTernario {
 
-    public Vehiculo() {
-        var a = 10;
-        this.velocidad = 0;
-        this.encendido = false;
-    }
+    int metodo1() {
+        var esMayor = (edad >= 18) ? true : false;
+        var resultado = (a > b) ? ((c > d) ? c : d) : b;
 
-    void arrancar() {
-        if (!this.encendido) {
-            this.encendido = true;
+        if( (edad >= 18) ? true : false ) {
+
         }
     }
+
+    int metodo2() {
+        return (flag) ? 1 : 0;
+    }
+
+
+
+
+
 }
-
-final class Auto extends Vehiculo {
-    int puertas;
-    Motor motor;
-
-    public Auto(int p) {
-        this.puertas = p;
-        this.motor = new Motor();
-    }
-
-    static int obtenerMaxVelocidad() {
-        return 180;
-    }
-
-    abstract void metodoAbstracto();
-
-    void acelerar(int cantidad) {
-        if (this.motor.estaEncendido()) {
-            while (cantidad > 0) {
-                this.velocidad = 5;
-                cantidad = cantidad - 1;
-            }
-        } else {
-            this.arrancar();
-        }
-
-        var max = Auto.obtenerMaxVelocidad();
-        if (this.velocidad > max) {
-            this.velocidad = max;
-        }
-    }
-
-    Vehiculo obtenerVehiculo() {
-        return this;
-    }
-}
-
-
-
-
 
 
