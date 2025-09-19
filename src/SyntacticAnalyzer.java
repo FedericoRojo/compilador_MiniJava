@@ -16,7 +16,7 @@ class SyntacticAnalyzer {
 
     void start() throws LexicalException, SyntacticException, IOException {
         listaClases();
-        match("eof");
+        match("$");
     }
 
     void listaClases() throws LexicalException, SyntacticException, IOException {
@@ -32,10 +32,21 @@ class SyntacticAnalyzer {
         modificadorOpcional();
         match("class");
         match("idClass");
+        parametroGenericoOpcional();
         herenciaOpcional();
         match("{");
         listaMiembros();
         match("}");
+    }
+
+    void parametroGenericoOpcional() throws LexicalException, SyntacticException, IOException {
+        if(actualToken.getId().equals("<")){
+            match("<");
+            match("idClass");
+            match(">");
+        }else{
+
+        }
     }
 
     void modificadorOpcional() throws LexicalException, SyntacticException, IOException {
@@ -155,6 +166,7 @@ class SyntacticAnalyzer {
             tipoPrimitivo();
         }else if(actualToken.getId().equals("idClass")){
             match("idClass");
+            parametroGenericoOpcional();
         }else{
             throw new SyntacticException(actualToken, "boolean, char, int o idClass");
         }
@@ -486,6 +498,7 @@ class SyntacticAnalyzer {
     void llamadaConstructor() throws LexicalException, SyntacticException, IOException {
         match("new");
         match("idClass");
+        parametroGenericoOpcional();
         argsActuales();
     }
 
@@ -496,7 +509,7 @@ class SyntacticAnalyzer {
     }
 
     void llamadaMetodoEstatico() throws LexicalException, SyntacticException, IOException {
-        match("idClass");
+            match("idClass");
         match(".");
         match("idMetVar");
         argsActuales();
@@ -546,7 +559,6 @@ class SyntacticAnalyzer {
 
 
     void match(String tokenName) throws IOException, LexicalException, SyntacticException {
-        //System.out.println("Entre con "+actualToken.getId()+" esperaba "+tokenName);
         if(tokenName.equals(actualToken.getId())){
             actualToken = lexicAnalyzer.getNextToken();
         }else{

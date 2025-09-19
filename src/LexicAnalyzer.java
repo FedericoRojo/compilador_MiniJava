@@ -266,7 +266,7 @@ public class LexicAnalyzer {
     }
 
     private Token end() {
-        return new Token("eof", "eof", sourceManager.getLineNumber());
+        return new Token("$", "", sourceManager.getLineNumber());
     }
 
 
