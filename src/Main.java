@@ -18,7 +18,6 @@ public class Main {
         try{
             String fileName = args[0];
 
-            //String fileName = "src/test/ejemplo.txt";
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
             LexicAnalyzer aLexico = new LexicAnalyzer(sourceManager);
@@ -52,11 +51,9 @@ public class Main {
     }
 
     public static void success(){
+        System.out.println("Compilación exitosa");
         System.out.println("[SinErrores]");
     }
 
-    public static void failed(){
-        System.out.println("[ConErrores]");
-    }
 
 }

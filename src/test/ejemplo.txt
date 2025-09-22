@@ -1,12 +1,13 @@
-class Vehiculo {
 
-    int metodo1() {
-        if( (edad >= 18) ? true : false ) {
+class Caja<T> {
 
-        }
+    void metodo(){
+        var c1 = new Caja<Integer>(5);
+        var c2 = new Caja<String>("hola");
     }
-
 }
+
+
 
 
 
