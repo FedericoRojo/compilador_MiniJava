@@ -1,16 +1,22 @@
+import TablaSimbolo.TablaSimbolo;
 import exceptions.LexicalException;
 import exceptions.SyntacticException;
-import model.Token;
+import model.*;
+
 import java.io.IOException;
 import auxiliar.Primeros;
 
 class SyntacticAnalyzer {
     LexicAnalyzer lexicAnalyzer;
     Token actualToken;
+    TablaSimbolo ts;
+    Clase claseActual;
+    Method methodActual;
 
     SyntacticAnalyzer(LexicAnalyzer lexA) throws LexicalException, IOException, SyntacticException {
         lexicAnalyzer = lexA;
         actualToken = lexicAnalyzer.getNextToken();
+        ts = new TablaSimbolo();
         start();
     }
 
@@ -29,11 +35,16 @@ class SyntacticAnalyzer {
     }
 
     void clase() throws LexicalException, SyntacticException, IOException {
-        modificadorOpcional();
+        String modifier = modificadorOpcional();
         match("class");
+        Token actualT = actualToken;
         match("idClass");
-        parametroGenericoOpcional();
-        herenciaOpcional();
+        Clase newClass = new Clase(actualT);
+        ts.setCurrentClass(newClass);
+        ts.getCurrentClass().setModifier(modifier);
+        //parametroGenericoOpcional();
+        Token parent = herenciaOpcional();
+        ts.getCurrentClass().setParent(parent, null);
         match("{");
         listaMiembros();
         match("}");
@@ -49,25 +60,33 @@ class SyntacticAnalyzer {
         }
     }
 
-    void modificadorOpcional() throws LexicalException, SyntacticException, IOException {
+    String modificadorOpcional() throws LexicalException, SyntacticException, IOException {
+        String toReturn = null;
         if(actualToken.getId().equals("abstract")){
             match("abstract");
+            toReturn = "abstract";
         }else if(actualToken.getId().equals("static")){
             match("static");
+            toReturn = "static";
         }else if(actualToken.getId().equals("final")){
             match("final");
+            toReturn = "final";
         }else{
 
         }
+        return toReturn;
     }
 
-    void herenciaOpcional() throws LexicalException, SyntacticException, IOException {
+    Token herenciaOpcional() throws LexicalException, SyntacticException, IOException {
+        Token toReturn = new Token("idClass", "Object", 100000);
         if(actualToken.getId().equals("extends")){
             match("extends");
+            toReturn = actualToken;
             match("idClass");
         }else{
 
         }
+        return toReturn;
     }
 
     void listaMiembros() throws SyntacticException, LexicalException, IOException {
@@ -92,28 +111,36 @@ class SyntacticAnalyzer {
         }
     }
 
-    void tipoMetodo() throws SyntacticException, LexicalException, IOException {
+    Token tipoMetodo() throws SyntacticException, LexicalException, IOException {
+        Token toReturn = null;
         if(Primeros.pTipo.contiene(actualToken.getId())){
-            tipo();
+            toReturn = tipo();
         }else if(actualToken.getId().equals("void")){
+            toReturn = actualToken;
             match("void");
         }else{
             throw new SyntacticException(actualToken, "tipo o void");
         }
+        return toReturn;
     }
 
     void metodoConModificador() throws LexicalException, SyntacticException, IOException {
-        modificador();
-        rMetodoConModificador();
+        Token auxModifier = modificador();
+        rMetodoConModificador(auxModifier);
     }
 
-    void rMetodoConModificador() throws LexicalException, SyntacticException, IOException {
-        tipoMetodo();
+    void rMetodoConModificador(Token modifier) throws LexicalException, SyntacticException, IOException {
+        Token typeMethod = tipoMetodo();
+        Token currentMethod = actualToken;
         match("idMetVar");
+        Method newMethod = new Method(modifier, typeMethod, currentMethod);
+        ts.setCurrentMethod(newMethod);
+        ts.addMethodToCurrentClass(newMethod);
         rMetodo();
     }
 
-    void modificador() throws LexicalException, SyntacticException, IOException {
+    Token modificador() throws LexicalException, SyntacticException, IOException {
+        Token toReturn = actualToken;
         if(actualToken.getId().equals("abstract")){
             match("abstract");
         }else if(actualToken.getId().equals("static")){
@@ -123,6 +150,7 @@ class SyntacticAnalyzer {
         }else{
             throw new SyntacticException(actualToken, "abstract, static o final");
         }
+        return toReturn;
     }
 
     void metodoOAtributo() throws LexicalException, SyntacticException, IOException {
@@ -161,18 +189,22 @@ class SyntacticAnalyzer {
         bloque();
     }
 
-    void tipo() throws LexicalException, SyntacticException, IOException {
+    Token tipo() throws LexicalException, SyntacticException, IOException {
+        Token toReturn = null;
         if(Primeros.pTipoPrimitivo.contiene(actualToken.getId())){
-            tipoPrimitivo();
+            toReturn = tipoPrimitivo();
         }else if(actualToken.getId().equals("idClass")){
+            toReturn = actualToken;
             match("idClass");
-            parametroGenericoOpcional();
+            //parametroGenericoOpcional();
         }else{
             throw new SyntacticException(actualToken, "boolean, char, int o idClass");
         }
+        return toReturn;
     }
 
-    void tipoPrimitivo() throws LexicalException, SyntacticException, IOException {
+    Token tipoPrimitivo() throws LexicalException, SyntacticException, IOException {
+        Token toReturn = actualToken;
         if(actualToken.getId().equals("boolean")){
             match("boolean");
         }else if(actualToken.getId().equals("char")){
@@ -182,6 +214,7 @@ class SyntacticAnalyzer {
         }else{
             throw new SyntacticException(actualToken, "boolean, char o int");
         }
+        return toReturn;
     }
 
     void argsFormales() throws LexicalException, SyntacticException, IOException {
@@ -218,8 +251,15 @@ class SyntacticAnalyzer {
     }
 
     void argFormal() throws LexicalException, SyntacticException, IOException {
-        tipo();
+        Token typeToken = tipo();
+
+        Type type = ts.resolveType(typeToken);
+        Token actualT = actualToken;
+
         match("idMetVar");
+
+        Parameter newParam = new Parameter(actualT, type);
+        ts.addParamToCurrentMethod(newParam);
     }
 
     void bloqueOpcional() throws LexicalException, SyntacticException, IOException {
