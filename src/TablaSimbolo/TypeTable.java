@@ -1,8 +1,6 @@
 package TablaSimbolo;
 
-import model.PrimitiveType;
-import model.ReferenceType;
-import model.Type;
+import model.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,18 +9,18 @@ public class TypeTable {
     private final Map<String, Type> types = new HashMap<>();
 
     public TypeTable() {
-        types.put("int", new PrimitiveType(PrimitiveType.Primitive.INT));
-        types.put("char", new PrimitiveType(PrimitiveType.Primitive.CHAR));
-        types.put("boolean", new PrimitiveType(PrimitiveType.Primitive.BOOLEAN));
-        types.put("void", new PrimitiveType(PrimitiveType.Primitive.VOID));
+        types.put("int", new IntType());
+        types.put("char", new CharType());
+        types.put("boolean", new BooleanType());
+        types.put("void", new VoidType());
     }
 
-    public Type getOrCreateReferenceType(String className) {
-        if (types.containsKey(className)) {
-            return types.get(className);
+    public Type getOrCreateReferenceType(String typeName) {
+        if (types.containsKey(typeName)) {
+            return types.get(typeName);
         } else {
-            Type newType = new ReferenceType(className);
-            types.put(className, newType);
+            Type newType = new ReferenceType(typeName);
+            types.put(typeName, newType);
             return newType;
         }
     }

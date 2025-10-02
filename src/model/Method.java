@@ -1,22 +1,16 @@
 package model;
 
-import java.util.HashMap;
 
-public class Method {
-    String name;
+public class Method extends GenericMethod{
     String modifier;
     Type returnType;
-    HashMap<String, Parameter> parameters;
 
-    public Method(Token modificador, Token tipoMetodo, Token idMet){
-        name = idMet.getLexeme();
-        modifier = modificador.getLexeme();
-        setReturnType(tipoMetodo.getLexeme());
+    public Method(Token modifier, Type typeMethod, Token idMet){
+        super(idMet.getLexeme());
+        this.modifier = modifier != null ? modifier.getLexeme() : null;
+        this.returnType = typeMethod;
     }
 
-    public void addParameter(Parameter param){
-        parameters.put(param.name, param);
-    }
 
     public String getModifier() {
         return modifier;
@@ -42,8 +36,5 @@ public class Method {
         this.returnType = returnType;
     }
 
-    void setReturnType(String tipo){
-
-    }
 
 }

@@ -9,7 +9,7 @@ public class TablaSimbolo {
     HashMap<String, Clase> clases;
     TypeTable typeTable;
     Clase currentClass;
-    Method currentMethod;
+    GenericMethod currentMethod;
 
     void addClass(Clase c){
         if( !clases.containsKey( c.name )){
@@ -31,11 +31,11 @@ public class TablaSimbolo {
         this.currentClass = currentClass;
     }
 
-    public Method getCurrentMethod() {
+    public GenericMethod getCurrentMethod() {
         return currentMethod;
     }
 
-    public void setCurrentMethod(Method currentMethod) {
+    public void setCurrentMethod(GenericMethod currentMethod) {
         this.currentMethod = currentMethod;
     }
 
@@ -51,10 +51,13 @@ public class TablaSimbolo {
         currentClass.addMethod(m);
     }
 
-    public void addParamToCurrentMethod(Parameter param){
-        currentMethod.addParameter(param);
-    }
+    public void associateConstructorToCurrentClass(Constructor c){ currentClass.addConstructor(c); }
 
+    public void addParamToCurrentMethod(Parameter param){ currentMethod.addParameter(param); }
+
+    public void addAttributeToCurrentClass(Attribute a){
+        currentClass.addAttribute(a);
+    }
 
     void estaBienDeclarada(){
         //Aca va el recorrido de las clases que llama a sus hijos para seguir recorriendo todo

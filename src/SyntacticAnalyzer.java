@@ -131,9 +131,13 @@ class SyntacticAnalyzer {
 
     void rMetodoConModificador(Token modifier) throws LexicalException, SyntacticException, IOException {
         Token typeMethod = tipoMetodo();
+
+        Type type = ts.resolveType(typeMethod);
         Token currentMethod = actualToken;
+
         match("idMetVar");
-        Method newMethod = new Method(modifier, typeMethod, currentMethod);
+
+        Method newMethod = new Method(modifier, type, currentMethod);
         ts.setCurrentMethod(newMethod);
         ts.addMethodToCurrentClass(newMethod);
         rMetodo();
@@ -154,23 +158,52 @@ class SyntacticAnalyzer {
     }
 
     void metodoOAtributo() throws LexicalException, SyntacticException, IOException {
+        Token typeToken;
+        Type type;
+        Token actualT;
+
         if(Primeros.pTipo.contiene(actualToken.getId())){
-            tipo();
+
+            typeToken = tipo();
+            type = ts.resolveType(typeToken);
+            actualT = actualToken;
             match("idMetVar");
-            rMetodoOAtributo();
+            rMetodoOAtributo(actualT, type);
+
         }else if(actualToken.getId().equals("void")){
+            typeToken = actualToken;
             match("void");
+            type = ts.resolveType(typeToken);
+
+            actualT = actualToken;
             match("idMetVar");
+
+            Method newMethod = new Method(null, type, actualT);
+
+            ts.setCurrentMethod(newMethod);
+            ts.addMethodToCurrentClass(newMethod);
+
             rMetodo();
         }else{
             throw new SyntacticException(actualToken, "tipo o void");
         }
     }
 
-    void rMetodoOAtributo() throws LexicalException, SyntacticException, IOException {
+    void rMetodoOAtributo(Token actualT, Type type) throws LexicalException, SyntacticException, IOException {
         if(Primeros.pRMetodo.contiene(actualToken.getId())){
+
+            Method newMethod = new Method(null, type, actualT);
+
+            ts.setCurrentMethod(newMethod);
+            ts.addMethodToCurrentClass(newMethod);
+
             rMetodo();
+
         }else if(actualToken.getId().equals(";")){
+
+            Attribute newAttribute = new Attribute(actualT, type);
+            ts.addAttributeToCurrentClass(newAttribute);
+
             match(";");
         }else{
             throw new SyntacticException(actualToken, "; o argumentos formales");
@@ -183,8 +216,15 @@ class SyntacticAnalyzer {
     }
 
     void constructor() throws LexicalException, SyntacticException, IOException {
+
         match("public");
+        Token name = actualToken;
+
         match("idClass");
+        Constructor newC = new Constructor(name, ts.getCurrentClass());
+        ts.associateConstructorToCurrentClass(newC);
+        ts.setCurrentMethod(newC);
+
         argsFormales();
         bloque();
     }
@@ -263,7 +303,6 @@ class SyntacticAnalyzer {
     }
 
     void bloqueOpcional() throws LexicalException, SyntacticException, IOException {
-
         if(Primeros.pBloque.contiene(actualToken.getId())){
             bloque();
         }else if(actualToken.getId().equals(";")){
@@ -275,7 +314,6 @@ class SyntacticAnalyzer {
 
     void bloque() throws LexicalException, SyntacticException, IOException {
         match("{");
-
         listaSentencias();
         match("}");
     }
@@ -288,7 +326,6 @@ class SyntacticAnalyzer {
         }else{
 
         }
-
     }
 
 
@@ -538,7 +575,7 @@ class SyntacticAnalyzer {
     void llamadaConstructor() throws LexicalException, SyntacticException, IOException {
         match("new");
         match("idClass");
-        parametroGenericoOpcional();
+        //parametroGenericoOpcional();
         argsActuales();
     }
 

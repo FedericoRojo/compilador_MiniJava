@@ -1,6 +1,5 @@
 package model;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
 public class Clase {
@@ -53,6 +52,14 @@ public class Clase {
 
     public void addMethod(Method m){
         methods.put(m.getName(), m);
+    }
+
+    public void addAttribute(Attribute a){
+        attributes.put(a.getName(), a);
+    }
+
+    public void addConstructor(Constructor c){
+        constructors.put(c.getName(), c);
     }
 
     void estaBienDeclarada(){
