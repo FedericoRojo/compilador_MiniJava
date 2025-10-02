@@ -1,4 +1,6 @@
+import TablaSimbolo.TablaSimbolo;
 import exceptions.LexicalException;
+import exceptions.SemanticException;
 import exceptions.SyntacticException;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
@@ -17,11 +19,13 @@ public class Main {
 
         try{
             String fileName = args[0];
+            //String fileName = "src/test/ejemplo.txt";
 
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
             LexicAnalyzer aLexico = new LexicAnalyzer(sourceManager);
-            SyntacticAnalyzer sA = new SyntacticAnalyzer(aLexico);
+            TablaSimbolo ts = new TablaSimbolo();
+            SyntacticAnalyzer sA = new SyntacticAnalyzer(aLexico, ts);
 
             sA.start();
 
@@ -33,6 +37,8 @@ public class Main {
             printLexError(e);
         } catch (SyntacticException e) {
             printSyntacticError(e);
+        }catch (SemanticException e){
+            printSemanticException(e);
         }
 
     }
@@ -43,6 +49,10 @@ public class Main {
             System.out.println("Detalle extra: "+e.extraMessage);
         }
         System.out.println(e.message);
+    }
+
+    public static void printSemanticException(SemanticException e){
+        System.out.println(e.getMessage());
     }
 
     public static void printSyntacticError(SyntacticException e){

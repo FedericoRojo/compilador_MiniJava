@@ -1,5 +1,6 @@
 import TablaSimbolo.TablaSimbolo;
 import exceptions.LexicalException;
+import exceptions.SemanticException;
 import exceptions.SyntacticException;
 import model.*;
 
@@ -13,19 +14,19 @@ class SyntacticAnalyzer {
     Clase claseActual;
     Method methodActual;
 
-    SyntacticAnalyzer(LexicAnalyzer lexA) throws LexicalException, IOException, SyntacticException {
+    SyntacticAnalyzer(LexicAnalyzer lexA, TablaSimbolo tabla) throws LexicalException, IOException, SyntacticException, SemanticException {
         lexicAnalyzer = lexA;
         actualToken = lexicAnalyzer.getNextToken();
-        ts = new TablaSimbolo();
+        ts = tabla;
         start();
     }
 
-    void start() throws LexicalException, SyntacticException, IOException {
+    void start() throws LexicalException, SyntacticException, IOException, SemanticException {
         listaClases();
         match("$");
     }
 
-    void listaClases() throws LexicalException, SyntacticException, IOException {
+    void listaClases() throws LexicalException, SyntacticException, IOException, SemanticException {
         if(Primeros.pClase.contiene(actualToken.getId())){
             clase();
             listaClases();
@@ -34,17 +35,18 @@ class SyntacticAnalyzer {
         }
     }
 
-    void clase() throws LexicalException, SyntacticException, IOException {
+    void clase() throws LexicalException, SyntacticException, IOException, SemanticException {
         String modifier = modificadorOpcional();
         match("class");
         Token actualT = actualToken;
         match("idClass");
         Clase newClass = new Clase(actualT);
+        ts.addClass(newClass);
         ts.setCurrentClass(newClass);
-        ts.getCurrentClass().setModifier(modifier);
+        ts.addModifierToCurrentClass(modifier);
         //parametroGenericoOpcional();
-        Token parent = herenciaOpcional();
-        ts.getCurrentClass().setParent(parent, null);
+        Token parentToken = herenciaOpcional();
+        ts.setParentOfCurrentClass(parentToken);
         match("{");
         listaMiembros();
         match("}");
@@ -89,7 +91,7 @@ class SyntacticAnalyzer {
         return toReturn;
     }
 
-    void listaMiembros() throws SyntacticException, LexicalException, IOException {
+    void listaMiembros() throws SyntacticException, LexicalException, IOException, SemanticException {
 
         if(Primeros.pListaMiembros.contiene(actualToken.getId())){
             miembro();
@@ -99,7 +101,7 @@ class SyntacticAnalyzer {
         }
     }
 
-    void miembro() throws SyntacticException, LexicalException, IOException {
+    void miembro() throws SyntacticException, LexicalException, IOException, SemanticException {
         if(Primeros.pMetodoOAtributo.contiene(actualToken.getId())){
             metodoOAtributo();
         }else if(Primeros.pConstructor.contiene(actualToken.getId())){
@@ -124,12 +126,12 @@ class SyntacticAnalyzer {
         return toReturn;
     }
 
-    void metodoConModificador() throws LexicalException, SyntacticException, IOException {
+    void metodoConModificador() throws LexicalException, SyntacticException, IOException, SemanticException {
         Token auxModifier = modificador();
         rMetodoConModificador(auxModifier);
     }
 
-    void rMetodoConModificador(Token modifier) throws LexicalException, SyntacticException, IOException {
+    void rMetodoConModificador(Token modifier) throws LexicalException, SyntacticException, IOException, SemanticException {
         Token typeMethod = tipoMetodo();
 
         Type type = ts.resolveType(typeMethod);
@@ -143,7 +145,7 @@ class SyntacticAnalyzer {
         rMetodo();
     }
 
-    Token modificador() throws LexicalException, SyntacticException, IOException {
+    Token modificador() throws LexicalException, SyntacticException, IOException, SemanticException {
         Token toReturn = actualToken;
         if(actualToken.getId().equals("abstract")){
             match("abstract");
@@ -157,7 +159,7 @@ class SyntacticAnalyzer {
         return toReturn;
     }
 
-    void metodoOAtributo() throws LexicalException, SyntacticException, IOException {
+    void metodoOAtributo() throws LexicalException, SyntacticException, IOException, SemanticException {
         Token typeToken;
         Type type;
         Token actualT;
@@ -189,7 +191,7 @@ class SyntacticAnalyzer {
         }
     }
 
-    void rMetodoOAtributo(Token actualT, Type type) throws LexicalException, SyntacticException, IOException {
+    void rMetodoOAtributo(Token actualT, Type type) throws LexicalException, SyntacticException, IOException, SemanticException {
         if(Primeros.pRMetodo.contiene(actualToken.getId())){
 
             Method newMethod = new Method(null, type, actualT);
@@ -210,12 +212,12 @@ class SyntacticAnalyzer {
         }
     }
 
-    void rMetodo() throws LexicalException, SyntacticException, IOException {
+    void rMetodo() throws LexicalException, SyntacticException, IOException, SemanticException {
         argsFormales();
         bloqueOpcional();
     }
 
-    void constructor() throws LexicalException, SyntacticException, IOException {
+    void constructor() throws LexicalException, SyntacticException, IOException, SemanticException {
 
         match("public");
         Token name = actualToken;
@@ -257,13 +259,13 @@ class SyntacticAnalyzer {
         return toReturn;
     }
 
-    void argsFormales() throws LexicalException, SyntacticException, IOException {
+    void argsFormales() throws LexicalException, SyntacticException, IOException, SemanticException {
         match("(");
         listaArgsFormalesOpcional();
         match(")");
     }
 
-    void listaArgsFormalesOpcional() throws LexicalException, SyntacticException, IOException {
+    void listaArgsFormalesOpcional() throws LexicalException, SyntacticException, IOException, SemanticException {
         if(Primeros.pListaArgsFormales.contiene(actualToken.getId())){
             listaArgsFormales();
         }else{
@@ -271,16 +273,16 @@ class SyntacticAnalyzer {
         }
     }
 
-    void listaArgsFormales() throws LexicalException, SyntacticException, IOException {
+    void listaArgsFormales() throws LexicalException, SyntacticException, IOException, SemanticException {
         rArgFormalRListaArgsFormales();
     }
 
-    void rArgFormalRListaArgsFormales() throws LexicalException, SyntacticException, IOException {
+    void rArgFormalRListaArgsFormales() throws LexicalException, SyntacticException, IOException, SemanticException {
         argFormal();
         rListaArgsFormales();
     }
 
-    void rListaArgsFormales() throws LexicalException, SyntacticException, IOException {
+    void rListaArgsFormales() throws LexicalException, SyntacticException, IOException, SemanticException {
         if(actualToken.getId().equals(",")){
             match(",");
             argFormal();
@@ -290,7 +292,7 @@ class SyntacticAnalyzer {
         }
     }
 
-    void argFormal() throws LexicalException, SyntacticException, IOException {
+    void argFormal() throws LexicalException, SyntacticException, IOException, SemanticException {
         Token typeToken = tipo();
 
         Type type = ts.resolveType(typeToken);

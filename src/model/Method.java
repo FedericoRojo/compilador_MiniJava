@@ -6,7 +6,7 @@ public class Method extends GenericMethod{
     Type returnType;
 
     public Method(Token modifier, Type typeMethod, Token idMet){
-        super(idMet.getLexeme());
+        super(idMet.getLexeme(), idMet);
         this.modifier = modifier != null ? modifier.getLexeme() : null;
         this.returnType = typeMethod;
     }
@@ -23,6 +23,7 @@ public class Method extends GenericMethod{
     public String getName() {
         return name;
     }
+
 
     public void setName(String name) {
         this.name = name;

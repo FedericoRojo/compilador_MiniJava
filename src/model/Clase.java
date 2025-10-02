@@ -1,10 +1,13 @@
 package model;
 
+import exceptions.SemanticException;
+
 import java.util.HashMap;
 
 public class Clase {
 
     public String name;
+    Token token;
     int declaredInLineNumber;
     String modifier;
     HashMap<String, Clase> parent;
@@ -13,7 +16,12 @@ public class Clase {
     HashMap<String, Constructor> constructors;
 
     public Clase(Token c){
-        this.name = c.lexeme;
+        this.parent = new HashMap<>();
+        this.attributes = new HashMap<>();
+        this.methods = new HashMap<>();
+        this.constructors = new HashMap<>();
+        this.name = c.getLexeme();
+        this.token = c;
         this.declaredInLineNumber = c.lineNumber;
     }
 
@@ -47,19 +55,34 @@ public class Clase {
     }
 
     public void setParent(Token t, Clase clase) {
-        parent.put(t.lexeme, clase);
+        parent.put(t.getLexeme(), clase);
     }
 
-    public void addMethod(Method m){
-        methods.put(m.getName(), m);
+    public Token getToken(){ return this.token; }
+
+    public void addMethod(Method m) throws SemanticException {
+        if( !methods.containsKey(m.getName()) ){
+            methods.put(m.getName(), m);
+        }else{
+            throw new SemanticException(m.getToken(), "Error: Ya existe un metodo con ese nombre en la clase");
+        }
     }
 
-    public void addAttribute(Attribute a){
-        attributes.put(a.getName(), a);
+    public void addAttribute(Attribute a) throws SemanticException {
+        if( !attributes.containsKey(a.getName()) ){
+            attributes.put(a.getName(), a);
+        }else{
+            throw new SemanticException(a.getToken(), "Error: ya existe un atributo de instancia con el mismo nombre");
+        }
+
     }
 
-    public void addConstructor(Constructor c){
-        constructors.put(c.getName(), c);
+    public void addConstructor(Constructor c) throws SemanticException{
+        if(constructors.isEmpty()){
+            constructors.put(c.getName(), c);
+        }else{
+            throw new SemanticException(c.getToken(), "Error: la clase actual ya tiene un constructor asociado");
+        }
     }
 
     void estaBienDeclarada(){

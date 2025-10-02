@@ -6,7 +6,7 @@ public class Constructor extends GenericMethod{
     Clase associatedClass;
 
     public Constructor(Token cToken, Clase aClass){
-        super(cToken.getLexeme());
+        super(cToken.getLexeme(), cToken);
         this.associatedClass = aClass;
     }
 

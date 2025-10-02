@@ -11,11 +11,18 @@ public class TablaSimbolo {
     Clase currentClass;
     GenericMethod currentMethod;
 
-    void addClass(Clase c){
+    public TablaSimbolo(){
+        clases = new HashMap<>();
+        typeTable = new TypeTable();
+        currentClass = null;
+        currentMethod = null;
+    }
+
+    public void addClass(Clase c) throws SemanticException {
         if( !clases.containsKey( c.name )){
             clases.put(c.name , c);
         }else{
-            throw new SemanticException("Error, entrada duplicada");
+            throw new SemanticException(c.getToken(), "Error: ya existe una clase con ese nombre");
         }
     }
 
@@ -43,20 +50,24 @@ public class TablaSimbolo {
         return clases;
     }
 
-    public void setClases(HashMap<String, Clase> clases) {
-        this.clases = clases;
-    }
-
-    public void addMethodToCurrentClass(Method m){
+    public void addMethodToCurrentClass(Method m) throws SemanticException {
         currentClass.addMethod(m);
     }
 
-    public void associateConstructorToCurrentClass(Constructor c){ currentClass.addConstructor(c); }
+    public void associateConstructorToCurrentClass(Constructor c) throws SemanticException {
+        currentClass.addConstructor(c);
+    }
 
-    public void addParamToCurrentMethod(Parameter param){ currentMethod.addParameter(param); }
+    public void addParamToCurrentMethod(Parameter param) throws SemanticException{ currentMethod.addParameter(param); }
 
-    public void addAttributeToCurrentClass(Attribute a){
+    public void addAttributeToCurrentClass(Attribute a) throws SemanticException{
         currentClass.addAttribute(a);
+    }
+
+    public void addModifierToCurrentClass(String modif){ currentClass.setModifier(modif); }
+
+    public void setParentOfCurrentClass(Token token){
+        currentClass.setParent(token, null);
     }
 
     void estaBienDeclarada(){

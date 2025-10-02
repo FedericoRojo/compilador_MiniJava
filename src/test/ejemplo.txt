@@ -1,14 +1,6 @@
+class Prueba1{
 
-class Caja<T> {
+    int metodo1() {
 
-    void metodo(){
-        var c1 = new Caja<Integer>(5);
-        var c2 = new Caja<String>("hola");
     }
 }
-
-
-
-
-
-

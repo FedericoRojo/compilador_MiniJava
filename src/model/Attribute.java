@@ -4,6 +4,7 @@ public class Attribute {
 
     String name;
     Type type;
+    Token token;
 
     public String getName() {
         return name;
@@ -21,9 +22,11 @@ public class Attribute {
         this.type = type;
     }
 
+    public Token getToken(){ return this.token; }
 
     public Attribute(Token tokenAttribute, Type type){
         this.name = tokenAttribute.getLexeme();
         this.type = type;
+        this.token= tokenAttribute;
     }
 }
