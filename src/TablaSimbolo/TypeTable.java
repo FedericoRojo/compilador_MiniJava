@@ -16,7 +16,7 @@ public class TypeTable {
     }
 
     public Type getOrCreateReferenceType(String typeName) {
-        if (types.containsKey(typeName)) {
+        if( typeName.equals("int") || typeName.equals("char") || typeName.equals("boolean") || typeName.equals("void")){
             return types.get(typeName);
         } else {
             Type newType = new ReferenceType(typeName);

@@ -55,7 +55,7 @@ public enum Primeros {
     pOperadorBinario(Set.of("||", "&&", "==", "!=", "<", ">", "<=", ">=", "+", "-", "*", "/", "%")),
     pExpresionBasica(Set.of("+", "++", "-", "–", "!", "true", "false", "intLiteral", "charLiteral",
             "null", "this", "stringLiteral", "idMetVar", "new", "idClass", "(")),
-    pOperadorUnario(Set.of("+", "++", "-", "–", "!")),
+    pOperadorUnario(Set.of("+", "++", "-", "--", "!")),
     pOperando(Set.of("true", "false", "intLiteral", "charLiteral", "null", "this", "stringLiteral",
             "idMetVar", "new", "idClass", "(")),
     pPrimitivo(Set.of("true", "false", "intLiteral", "charLiteral", "null")),

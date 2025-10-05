@@ -1,3 +1,5 @@
+package analizers;
+
 import TablaSimbolo.TablaSimbolo;
 import exceptions.LexicalException;
 import exceptions.SemanticException;
@@ -7,21 +9,21 @@ import model.*;
 import java.io.IOException;
 import auxiliar.Primeros;
 
-class SyntacticAnalyzer {
+public class SyntacticAnalyzer {
     LexicAnalyzer lexicAnalyzer;
     Token actualToken;
     TablaSimbolo ts;
     Clase claseActual;
     Method methodActual;
 
-    SyntacticAnalyzer(LexicAnalyzer lexA, TablaSimbolo tabla) throws LexicalException, IOException, SyntacticException, SemanticException {
+    public SyntacticAnalyzer(LexicAnalyzer lexA) throws LexicalException, IOException, SyntacticException, SemanticException {
         lexicAnalyzer = lexA;
         actualToken = lexicAnalyzer.getNextToken();
-        ts = tabla;
+        ts = TablaSimbolo.getInstance();
         start();
     }
 
-    void start() throws LexicalException, SyntacticException, IOException, SemanticException {
+    public void start() throws LexicalException, SyntacticException, IOException, SemanticException {
         listaClases();
         match("$");
     }

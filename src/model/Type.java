@@ -7,6 +7,8 @@ public abstract class Type {
         this.name = nombre;
     }
 
+    public String getName(){return this.name;}
+
     public abstract boolean isCompatible(Type otro);
 
     @Override

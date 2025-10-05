@@ -1,5 +1,8 @@
 package model;
 
+import TablaSimbolo.TablaSimbolo;
+import exceptions.SemanticException;
+
 public class Attribute {
 
     String name;
@@ -23,6 +26,19 @@ public class Attribute {
     }
 
     public Token getToken(){ return this.token; }
+
+    public void checkWellDefined() throws SemanticException {
+        Clase a = TablaSimbolo.getInstance().getClassByString(this.type.getName());
+        if( type instanceof ReferenceType refType){
+            if(a != null){
+                if(refType.getAssociatedClass() == null ){
+                    refType.setAssociatedClass(a);
+                }
+            }else{
+                throw new SemanticException(token, "Error: el tipo del atributo esta asociado a una clase que no existe");
+            }
+        }
+    }
 
     public Attribute(Token tokenAttribute, Type type){
         this.name = tokenAttribute.getLexeme();

@@ -1,6 +1,11 @@
 package model;
 
 
+import TablaSimbolo.TablaSimbolo;
+import exceptions.SemanticException;
+
+import java.util.HashMap;
+
 public class Method extends GenericMethod{
     String modifier;
     Type returnType;
@@ -11,6 +16,7 @@ public class Method extends GenericMethod{
         this.returnType = typeMethod;
     }
 
+    public boolean isAbstract(){ return modifier.equals("abstract"); }
 
     public String getModifier() {
         return modifier;
@@ -27,6 +33,40 @@ public class Method extends GenericMethod{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void checkWellDefined() throws SemanticException {
+        Clase a = TablaSimbolo.getInstance().getClassByString(this.returnType.getName());
+        if( returnType instanceof ReferenceType refType){
+            if(a != null){
+                if(refType.getAssociatedClass() == null ){
+                    refType.setAssociatedClass(a);
+                }
+            }else{
+                throw new SemanticException(token, "Error: el tipo del metodo esta asociado a una clase que no existe");
+            }
+        }
+        super.checkWellDefined();
+    }
+
+    public void consolidateMethod(){
+
+    }
+
+    public boolean isFinal(){
+        return modifier.equals("final");
+    }
+
+    public boolean isStatic(){
+        return modifier.equals("static");
+    }
+
+    public boolean hasSameSignature(Method m){
+        return (this.name.equals(m.getName())
+                && this.modifier.equals(m.getModifier())
+                && this.returnType.getName().equals(m.getReturnType().getName())
+                && super.hasSameParameters( m.getParameters() )
+                );
     }
 
     public Type getReturnType() {

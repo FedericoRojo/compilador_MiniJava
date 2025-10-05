@@ -1,6 +1,5 @@
 class Prueba1{
-
     int metodo1() {
-
+        var y = --x;
     }
 }

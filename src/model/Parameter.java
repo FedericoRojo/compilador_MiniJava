@@ -1,5 +1,8 @@
 package model;
 
+import TablaSimbolo.TablaSimbolo;
+import exceptions.SemanticException;
+
 public class Parameter {
     String name;
     Token token;
@@ -9,6 +12,19 @@ public class Parameter {
         name = param.getLexeme();
         this.token = param;
         this.type = type;
+    }
+
+    public void checkWellDefined() throws SemanticException {
+        Clase a = TablaSimbolo.getInstance().getClassByString(this.type.getName());
+        if( type instanceof ReferenceType refType){
+            if(a != null){
+                if(refType.getAssociatedClass() == null ){
+                    refType.setAssociatedClass(a);
+                }
+            }else{
+                throw new SemanticException(token, "Error: el tipo del parametro esta asociado a una clase que no existe");
+            }
+        }
     }
 
     public Token getToken(){ return this.token; }

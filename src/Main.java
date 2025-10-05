@@ -1,4 +1,6 @@
 import TablaSimbolo.TablaSimbolo;
+import analizers.LexicAnalyzer;
+import analizers.SyntacticAnalyzer;
 import exceptions.LexicalException;
 import exceptions.SemanticException;
 import exceptions.SyntacticException;
@@ -11,24 +13,24 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) {
-
+/*
         if(args.length == 0){
             System.out.println("Falto proveer un archivo fuente");
             System.exit(1);
-        }
+        }*/
 
         try{
-            String fileName = args[0];
-            //String fileName = "src/test/ejemplo.txt";
+            //String fileName = args[0];
+            String fileName = "src/test/ejemplo.txt";
 
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
             LexicAnalyzer aLexico = new LexicAnalyzer(sourceManager);
-            TablaSimbolo ts = new TablaSimbolo();
-            SyntacticAnalyzer sA = new SyntacticAnalyzer(aLexico, ts);
+            SyntacticAnalyzer sA = new SyntacticAnalyzer(aLexico);
 
             sA.start();
 
+            TablaSimbolo.getInstance().checkWellDefined();
             success();
 
         }catch (IOException e) {

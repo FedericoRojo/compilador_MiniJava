@@ -7,6 +7,14 @@ public class ReferenceType extends Type {
         super(nameClass);
     }
 
+    public void setAssociatedClass(Clase c){
+        this.associatedClass = c;
+    }
+
+    public Clase getAssociatedClass(){
+        return associatedClass;
+    }
+
     @Override
     public boolean isCompatible(Type otro) {
         return true;
