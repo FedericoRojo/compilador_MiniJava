@@ -3,8 +3,7 @@ package model;
 
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
-
-import java.util.HashMap;
+import java.util.Objects;
 
 public class Method extends GenericMethod{
     String modifier;
@@ -16,7 +15,7 @@ public class Method extends GenericMethod{
         this.returnType = typeMethod;
     }
 
-    public boolean isAbstract(){ return modifier.equals("abstract"); }
+    public boolean isAbstract(){ return (modifier != null && modifier.equals("abstract")); }
 
     public String getModifier() {
         return modifier;
@@ -43,7 +42,8 @@ public class Method extends GenericMethod{
                     refType.setAssociatedClass(a);
                 }
             }else{
-                throw new SemanticException(token, "Error: el tipo del metodo esta asociado a una clase que no existe");
+                throw new SemanticException(this.returnType.getToken().getLineNumber(), this.returnType.getName(),
+                            "Error: el tipo del metodo "+this.getName()+" esta asociado a una clase que no existe");
             }
         }
         super.checkWellDefined();
@@ -54,17 +54,18 @@ public class Method extends GenericMethod{
     }
 
     public boolean isFinal(){
-        return modifier.equals("final");
+        return Objects.equals(modifier, "final");
     }
 
     public boolean isStatic(){
-        return modifier.equals("static");
+        return Objects.equals(modifier, "static");
     }
 
     public boolean hasSameSignature(Method m){
-        return (this.name.equals(m.getName())
-                && this.modifier.equals(m.getModifier())
-                && this.returnType.getName().equals(m.getReturnType().getName())
+        return ( this.name.equals(m.getName())
+                //&& (Objects.equals(this.modifier, m.getModifier()))
+                && (Objects.equals( this.returnType != null ? this.returnType.getName() : null,
+                                    m.getReturnType() != null ? m.getReturnType().getName() : null))
                 && super.hasSameParameters( m.getParameters() )
                 );
     }

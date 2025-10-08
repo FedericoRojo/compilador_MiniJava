@@ -2,13 +2,9 @@ package model;
 
 public class PrimitiveType extends Type {
 
-    public PrimitiveType(String nameType) {
-        super(nameType);
+    public PrimitiveType(Token token) {
+        super(token);
     }
 
-    @Override
-    public boolean isCompatible(Type otro) {
-        return true;
-    }
 }
 

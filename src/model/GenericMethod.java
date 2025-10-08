@@ -5,6 +5,7 @@ import exceptions.SemanticException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class GenericMethod {
     String name;
@@ -37,7 +38,10 @@ public class GenericMethod {
             Parameter p1 = parameters.get(i);
             Parameter p2 = params.get(i);
 
-            if(!p1.getType().getName().equals(p2.getType().getName())){
+            String name1 = (p1 != null && p1.getType()!= null) ? p1.getType().getName() : null;
+            String name2 = (p2 != null && p2.getType()!= null) ? p2.getType().getName() : null;
+
+            if(!Objects.equals(name1,name2)){
                 toReturn=false;
             }
         }

@@ -15,12 +15,12 @@ public class TypeTable {
         types.put("void", new VoidType());
     }
 
-    public Type getOrCreateReferenceType(String typeName) {
-        if( typeName.equals("int") || typeName.equals("char") || typeName.equals("boolean") || typeName.equals("void")){
-            return types.get(typeName);
+    public Type getOrCreateReferenceType(Token token) {
+        if( token.getLexeme().equals("int") || token.getLexeme().equals("char") || token.getLexeme().equals("boolean") || token.getLexeme().equals("void")){
+            return types.get(token.getLexeme());
         } else {
-            Type newType = new ReferenceType(typeName);
-            types.put(typeName, newType);
+            Type newType = new ReferenceType(token);
+            types.put(token.getLexeme(), newType);
             return newType;
         }
     }

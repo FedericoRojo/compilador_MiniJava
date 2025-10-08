@@ -2,6 +2,6 @@ package model;
 
 public class BooleanType extends PrimitiveType{
     public BooleanType(){
-        super("boolean");
+        super(new Token("boolean", "boolean", -1));
     }
 }

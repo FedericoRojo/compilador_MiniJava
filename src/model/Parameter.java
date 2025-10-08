@@ -22,7 +22,7 @@ public class Parameter {
                     refType.setAssociatedClass(a);
                 }
             }else{
-                throw new SemanticException(token, "Error: el tipo del parametro esta asociado a una clase que no existe");
+                throw new SemanticException(this.type.getToken().getLineNumber(), this.type.getName(), "Error: el tipo del parametro "+this.getName()+" esta asociado a una clase que no existe");
             }
         }
     }

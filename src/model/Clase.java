@@ -19,6 +19,7 @@ public class Clase {
     HashMap<String, Attribute> attributes;
     HashMap<String, Method> methods;
     HashMap<String, Constructor> constructors;
+    boolean consolidated;
 
     public Clase(Token c){
         this.parent = new HashMap<>();
@@ -29,6 +30,7 @@ public class Clase {
         this.token = c;
         this.declaredInLineNumber = c.lineNumber;
         this.modifier = "";
+        this.consolidated = false;
     }
 
     public int getDeclaredInLineNumber() {
@@ -57,8 +59,11 @@ public class Clase {
 
 
     public Clase getParent() throws SemanticException {
-        Token key = parent.keySet().iterator().next();
-        Clase c = TablaSimbolo.getInstance().getClassByString(key.getLexeme());
+        Clase c = null;
+        if(!this.getName().equals("Object")){
+            Token key = parent.keySet().iterator().next();
+            c = TablaSimbolo.getInstance().getClassByString(key.getLexeme());
+        }
         return c;
     }
 
@@ -72,7 +77,7 @@ public class Clase {
         if( !methods.containsKey(m.getName()) ){
             methods.put(m.getName(), m);
         }else{
-            throw new SemanticException(m.getToken(), "Error: Ya existe un metodo con ese nombre en la clase");
+            throw new SemanticException(m.getToken(), "Error: Ya existe un metodo con nombre "+m.getName()+" en la clase "+this.getName());
         }
     }
 
@@ -80,7 +85,7 @@ public class Clase {
         if( !attributes.containsKey(a.getName()) ){
             attributes.put(a.getName(), a);
         }else{
-            throw new SemanticException(a.getToken(), "Error: ya existe un atributo de instancia con el mismo nombre");
+            throw new SemanticException(a.getToken(), "Error: ya existe un atributo "+a.getName()+" con el mismo nombre en la clase "+this.getName());
         }
 
     }
@@ -89,7 +94,7 @@ public class Clase {
         if(constructors.isEmpty()){
             constructors.put(c.getName(), c);
         }else{
-            throw new SemanticException(c.getToken(), "Error: la clase actual ya tiene un constructor asociado");
+            throw new SemanticException(c.getToken(), "Error: la clase "+this.getName()+" ya tiene un constructor asociado");
         }
     }
 
@@ -97,15 +102,21 @@ public class Clase {
         checkParent();
         isAbstractAndHasConstructor();
         isConcrete();
-        consolidateMethods();
-        consolidateAtrributes();
+    }
+
+    public void consolidate() throws SemanticException{
+        if(! this.consolidated  ) {
+            consolidateMethods();
+            consolidateAtrributes();
+            this.consolidated = true;
+        }
     }
 
     public HashMap<String, Method> getMethods(){ return this.methods; }
 
     public void consolidateAtrributes() throws SemanticException{
         Clase currentParent = getParent();
-        if( !currentParent.getName().equals("Object")){
+        if( currentParent != null && !currentParent.getName().equals("Object")){
             currentParent.consolidateAtrributes();
             HashMap<String, Attribute> actualAttributes = this.attributes;
             for(Attribute aParent: currentParent.getAttributes().values()){
@@ -113,7 +124,7 @@ public class Clase {
                 if(aActual == null){
                     actualAttributes.put(aParent.getName(), aParent);
                 }else{
-                    throw new SemanticException(aActual.getToken(), "Error: clase actual tiene un atributo de instancia con el mismo nombre que el de su padre");
+                    throw new SemanticException(aActual.getToken(), "Error: la clase "+this.getName()+" tiene un atributo '"+aActual.getName()+"' con el mismo nombre que el de su padre");
                 }
             }
         }
@@ -123,30 +134,32 @@ public class Clase {
     public HashMap<String, Attribute> getAttributes(){ return this.attributes; }
 
     public void consolidateMethods() throws SemanticException {
-        Clase currentParent = getParent();
-        if( !currentParent.getName().equals("Object")){
-            currentParent.consolidateMethods();
-            HashMap<String, Method> actualMethods = this.methods;
+        if(!this.consolidated) {
+            Clase currentParent = getParent();
+            if (currentParent != null) {
+                currentParent.consolidateMethods();
+                HashMap<String, Method> actualMethods = this.methods;
 
-            for(Method mParent: currentParent.getMethods().values()){
-                Method mActual = actualMethods.get(mParent.getName());
-                if(mActual == null){
-                    handleInheritedMethod(mParent, actualMethods);
-                }else{
-                    handleOverridenMethod(mActual, mParent);
+                for (Method mParent : currentParent.getMethods().values()) {
+                    Method mActual = actualMethods.get(mParent.getName());
+                    if (mActual == null) {
+                        handleInheritedMethod(mParent, actualMethods);
+                    } else {
+                        handleOverridenMethod(mActual, mParent);
+                    }
                 }
-            }
 
+            }
+            checkMethods();
         }
-        checkMethods();
     }
 
     private void handleOverridenMethod(Method mActual, Method mParent) throws SemanticException {
         if( !mActual.hasSameSignature(mParent)){
-            throw new SemanticException(token, "Error: clase actual sobreescribe un metodo heredado pero no coinciden en signatura");
+            throw new SemanticException(mActual.getToken(), "Error: la clase "+this.getName()+" sobreescribe un metodo heredado pero no coinciden en signatura");
         }
         if( mParent.isFinal() || mParent.isStatic() ){
-            throw new SemanticException(token, "Error: clase actual sobreescribe un metodo static o final");
+            throw new SemanticException(mActual.getToken(), "Error: la clase "+this.getName()+" sobreescribe un metodo static o final");
         }
     }
 
@@ -156,8 +169,8 @@ public class Clase {
 
     private void handleInheritedMethod(Method mParent, HashMap<String, Method> actualMethods) throws SemanticException {
         if(mParent.isAbstract()){
-            if( isAbstractClass() ){
-                throw new SemanticException(token, "Error: clase actual es concreta y no redefine un metodo abstracto heredado");
+            if( !isAbstractClass() ){
+                throw new SemanticException(token, "Error: la clase "+this.getName()+" es concreta y no redefine un metodo abstracto heredado");
             }else{
                 actualMethods.put(mParent.getName(), mParent);
             }
@@ -181,34 +194,40 @@ public class Clase {
 
     public void checkMethods() throws SemanticException {
         for(Method m: methods.values()){
+            if(m.isAbstract()){
+                if(!this.isAbstractClass()){
+                    throw new SemanticException(m.getToken(), "Error: la clase "+this.getName()+" es concreta y tiene un metodo abstracto");
+                }
+            }
             m.checkWellDefined();
         }
     }
 
     public void checkParent()throws SemanticException{
-        if(parent.isEmpty()){
-            Clase c = TablaSimbolo.getInstance().getClassByString("Object");
-            parent.put(c.getToken(), c);
-        }else{
-            Token key = parent.keySet().iterator().next();
-            Clase c = TablaSimbolo.getInstance().getClassByString(key.getLexeme());
+        if(!this.getName().equals("Object")) {
+            if (parent.isEmpty()) {
+                Clase c = TablaSimbolo.getInstance().getClassByString("Object");
+                parent.put(c.getToken(), c);
+            } else {
+                Token key = parent.keySet().iterator().next();
+                Clase c = TablaSimbolo.getInstance().getClassByString(key.getLexeme());
 
-            if(c != null){
-                if( this.isAbstractClass() && !c.isAbstractClass() && !c.getName().equals("Object")){
-                    throw new SemanticException(token, "Error: una clase asbtracta intenta heredar de una concreta");
+                if (c != null) {
+                    if (this.isAbstractClass() && !c.isAbstractClass() && !c.getName().equals("Object")) {
+                        throw new SemanticException(token, "Error: la clase "+this.getName()+" es asbtracta e intenta heredar de una concreta "+c.getName());
+                    }
+                    if (c.isStaticClass() || c.isFinalClass()) {
+                        throw new SemanticException(token, "Error: la clase "+this.getName()+" intenta heredar de una clase static o final");
+                    }
+
+                    setParent(key, c);
+                    checkCircularity(c);
+
+                } else {
+                    throw new SemanticException(key, "Error: la clase "+this.getName()+" intenta heredar de una clase que no existe");
                 }
 
-                if(c.isStaticClass() || c.isFinalClass()){
-                    throw new SemanticException(key, "Error: se intenta heredar de una clase static o final");
-                }
-
-                setParent(key, c);
-                checkCircularity(c);
-
-            }else{
-                throw new SemanticException(key, "Error: se intenta heredar de una clase que no existe");
             }
-
         }
     }
 
@@ -224,11 +243,11 @@ public class Clase {
         Set<Clase> visitados = new HashSet<>();
 
         Clase actual = c;
-        while ( !actual.getParent().getToken().getLexeme().equals("Object") ) {
+        while ( !actual.getName().equals("Object") && !actual.getParent().getToken().getLexeme().equals("Object") ) {
             Clase aParent = actual.getParent();
 
             if (visitados.contains(aParent)) {
-                throw new SemanticException(c.getToken(), "Error: hay circularidad en la herencia");
+                throw new SemanticException(this.getToken(), "Error: hay circularidad en la herencia");
             }
 
             visitados.add(aParent);
@@ -239,7 +258,7 @@ public class Clase {
     public void isAbstractAndHasConstructor() throws SemanticException{
         if( this.isAbstractClass() ){
             if( !constructors.isEmpty() ){
-                throw new SemanticException(this.token, "Error: clase abstracta no puede tener constructor asociado");
+                throw new SemanticException(getConstructor().getToken(), "Error: la clase abstracta "+this.getName()+" no puede tener constructor asociado");
             }
         }
     }

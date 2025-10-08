@@ -35,7 +35,7 @@ public class Attribute {
                     refType.setAssociatedClass(a);
                 }
             }else{
-                throw new SemanticException(token, "Error: el tipo del atributo esta asociado a una clase que no existe");
+                throw new SemanticException(this.type.getToken().getLineNumber(), this.type.getName(), "Error: el atributo "+this.name+" esta asociado a un tipo que no existe");
             }
         }
     }

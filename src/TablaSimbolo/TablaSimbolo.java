@@ -28,9 +28,19 @@ public class TablaSimbolo {
         return instance;
     }
 
+    public static void removeInstance(){
+        instance = null;
+    }
+
     public void checkWellDefined() throws SemanticException{
         for(Clase c: clases.values()){
             c.checkWellDefined();
+        }
+    }
+
+    public void consolidate() throws SemanticException{
+        for(Clase c: clases.values()){
+            c.consolidate();
         }
     }
 
@@ -133,12 +143,11 @@ public class TablaSimbolo {
             }else{
                 throw new SemanticException(c.getToken(), "Error: ya existe una clase con ese nombre");
             }
-
         }
     }
 
     public Type resolveType(Token typeToken){
-        return typeTable.getOrCreateReferenceType(typeToken.getLexeme());
+        return typeTable.getOrCreateReferenceType(typeToken);
     }
 
     public Clase getCurrentClass() {
@@ -185,13 +194,6 @@ public class TablaSimbolo {
         currentClass.setParent(token, null);
     }
 
-    public void isWellDeclared(){
-
-    }
-
-    public void consolidate(){
-
-    }
 
 
 }

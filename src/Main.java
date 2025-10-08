@@ -13,15 +13,15 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) {
-/*
+
         if(args.length == 0){
             System.out.println("Falto proveer un archivo fuente");
             System.exit(1);
-        }*/
+        }
 
         try{
-            //String fileName = args[0];
-            String fileName = "src/test/ejemplo.txt";
+            String fileName = args[0];
+            //String fileName = "src/test/ejemplo.txt";
 
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
@@ -31,6 +31,7 @@ public class Main {
             sA.start();
 
             TablaSimbolo.getInstance().checkWellDefined();
+            TablaSimbolo.getInstance().consolidate();
             success();
 
         }catch (IOException e) {
@@ -43,6 +44,7 @@ public class Main {
             printSemanticException(e);
         }
 
+        TablaSimbolo.removeInstance();
     }
 
     public static void printLexError(LexicalException e){
@@ -54,6 +56,7 @@ public class Main {
     }
 
     public static void printSemanticException(SemanticException e){
+        System.out.println(e.message);
         System.out.println(e.getMessage());
     }
 
