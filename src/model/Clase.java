@@ -161,6 +161,9 @@ public class Clase {
         if( mParent.isFinal() || mParent.isStatic() ){
             throw new SemanticException(mActual.getToken(), "Error: la clase "+this.getName()+" sobreescribe un metodo static o final");
         }
+        if( mParent.isAbstract() && !mActual.hasBlock){
+            throw new SemanticException(mActual.getToken(), "Error: el metodo "+mActual.getName()+" redefine un metodo abstracto pero no tiene cuerpo");
+        }
     }
 
     public boolean isAbstractClass(){

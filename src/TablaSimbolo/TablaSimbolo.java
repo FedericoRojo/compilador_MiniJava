@@ -60,24 +60,29 @@ public class TablaSimbolo {
         Method debugIMethod = new Method( new Token("-1", "static", -1),
                 resolveType(voidType),
                 new Token("-1", "debugPrint", -1));
+        debugIMethod.setHasBlock(true);
         debugIMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType)));
         cObject.addMethod( debugIMethod );
 
 
-        cSystem.addMethod( new Method( new Token("-2", "static", -2),
-                           resolveType(intType),
-                           new Token("-2", "read", -2)));
+        Method mread = new Method( new Token("-2", "static", -2),
+                resolveType(intType),
+                new Token("-2", "read", -2));
+        mread.setHasBlock(true);
+        cSystem.addMethod( mread );
 
         Method printBMethod = new Method( new Token("-2", "static", -2),
                             resolveType(voidType),
                             new Token("-2", "printB", -2));
         printBMethod.addParameter(new Parameter(new Token("-2", "b", -2), resolveType(booleanType) ));
+        printBMethod.setHasBlock(true);
         cSystem.addMethod(printBMethod);
 
         Method printCMethod = new Method( new Token("-2", "static", -2),
                                         resolveType(voidType),
                                         new Token("-2", "printC", -2));
         printCMethod.addParameter(new Parameter(new Token("-2", "c", -2), resolveType(charType) ));
+        printCMethod.setHasBlock(true);
         cSystem.addMethod(printCMethod);
 
 
@@ -85,6 +90,7 @@ public class TablaSimbolo {
                 resolveType(voidType),
                 new Token("-2", "printI", -2));
         printIMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType) ));
+        printIMethod.setHasBlock(true);
         cSystem.addMethod(printIMethod);
 
 
@@ -92,12 +98,14 @@ public class TablaSimbolo {
                 resolveType(voidType),
                 new Token("-2", "printS", -2));
         printSMethod.addParameter(new Parameter(new Token("-2", "s", -2), resolveType(stringType) ));
+        printSMethod.setHasBlock(true);
         cSystem.addMethod(printSMethod);
 
 
         Method printlnMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
                 new Token("-2", "println", -2));
+        printlnMethod.setHasBlock(true);
         cSystem.addMethod(printlnMethod);
 
 
@@ -105,6 +113,7 @@ public class TablaSimbolo {
                 resolveType(voidType),
                 new Token("-2", "printBln", -2));
         printBlnMethod.addParameter(new Parameter(new Token("-2", "b", -2), resolveType(booleanType) ));
+        printBlnMethod.setHasBlock(true);
         cSystem.addMethod(printBlnMethod);
 
 
@@ -112,6 +121,7 @@ public class TablaSimbolo {
                 resolveType(voidType),
                 new Token("-2", "printCln", -2));
         printClnMethod.addParameter(new Parameter(new Token("-2", "c", -2), resolveType(charType) ));
+        printClnMethod.setHasBlock(true);
         cSystem.addMethod(printClnMethod);
 
 
@@ -119,6 +129,7 @@ public class TablaSimbolo {
                 resolveType(voidType),
                 new Token("-2", "printIln", -2));
         printIlnMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType) ));
+        printIlnMethod.setHasBlock(true);
         cSystem.addMethod(printIlnMethod);
 
 
@@ -126,6 +137,7 @@ public class TablaSimbolo {
                 resolveType(voidType),
                 new Token("-2", "printSln", -2));
         printSlnMethod.addParameter(new Parameter(new Token("-2", "s", -2), resolveType(stringType) ));
+        printSlnMethod.setHasBlock(true);
         cSystem.addMethod(printSlnMethod);
 
         clases.put(cObject.getName(), cObject);
@@ -144,6 +156,10 @@ public class TablaSimbolo {
                 throw new SemanticException(c.getToken(), "Error: ya existe una clase con ese nombre");
             }
         }
+    }
+
+    public void actualMethodHasBlock() throws SemanticException {
+        currentMethod.setHasBlock(true);
     }
 
     public Type resolveType(Token typeToken){

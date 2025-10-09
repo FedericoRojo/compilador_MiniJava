@@ -9,6 +9,7 @@ public class Method extends GenericMethod{
     String modifier;
     Type returnType;
 
+
     public Method(Token modifier, Type typeMethod, Token idMet){
         super(idMet.getLexeme(), idMet);
         this.modifier = modifier != null ? modifier.getLexeme() : null;
@@ -35,6 +36,13 @@ public class Method extends GenericMethod{
     }
 
     public void checkWellDefined() throws SemanticException {
+        if(isAbstract() && hasBlock){
+            throw new SemanticException(this.token, "Error: el metodo "+this.getName()+" es abstracto y tiene cuerpo");
+        }
+        if(!isAbstract() && !hasBlock){
+            throw new SemanticException(this.token, "Error: el metodo "+this.getName()+" es concreto y no tiene cuerpo");
+        }
+
         Clase a = TablaSimbolo.getInstance().getClassByString(this.returnType.getName());
         if( returnType instanceof ReferenceType refType){
             if(a != null){
@@ -63,7 +71,6 @@ public class Method extends GenericMethod{
 
     public boolean hasSameSignature(Method m){
         return ( this.name.equals(m.getName())
-                //&& (Objects.equals(this.modifier, m.getModifier()))
                 && (Objects.equals( this.returnType != null ? this.returnType.getName() : null,
                                     m.getReturnType() != null ? m.getReturnType().getName() : null))
                 && super.hasSameParameters( m.getParameters() )

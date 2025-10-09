@@ -11,12 +11,16 @@ public class GenericMethod {
     String name;
     Token token;
     List<Parameter> parameters;
+    boolean hasBlock;
 
     public GenericMethod(String name, Token token){
         this.name = name;
         this.token = token;
         this.parameters = new ArrayList<>();
+        this.hasBlock = false;
     }
+
+    public void setHasBlock(boolean b){this.hasBlock = b;}
 
     public String getName(){ return this.name;}
 

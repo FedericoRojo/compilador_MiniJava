@@ -1,8 +1,12 @@
-///[Error:X|5]
+///[Error:m1|9]
 //
 
-class A {
-    void m1(X x){}
+abstract class A {
+    abstract void m1(int x);
+}
+
+class B extends A {
+    void m1(int x);
 }
 
 

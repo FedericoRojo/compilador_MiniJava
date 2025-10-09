@@ -306,7 +306,7 @@ public class SyntacticAnalyzer {
         ts.addParamToCurrentMethod(newParam);
     }
 
-    void bloqueOpcional() throws LexicalException, SyntacticException, IOException {
+    void bloqueOpcional() throws LexicalException, SyntacticException, IOException, SemanticException {
         if(Primeros.pBloque.contiene(actualToken.getId())){
             bloque();
         }else if(actualToken.getId().equals(";")){
@@ -316,13 +316,14 @@ public class SyntacticAnalyzer {
         }
     }
 
-    void bloque() throws LexicalException, SyntacticException, IOException {
+    void bloque() throws LexicalException, SyntacticException, IOException, SemanticException {
         match("{");
         listaSentencias();
         match("}");
+        ts.actualMethodHasBlock();
     }
 
-    void listaSentencias() throws SyntacticException, LexicalException, IOException {
+    void listaSentencias() throws SyntacticException, LexicalException, IOException, SemanticException {
 
         if(Primeros.pSentencia.contiene(actualToken.getId())){
             sentencia();
@@ -334,7 +335,7 @@ public class SyntacticAnalyzer {
 
 
 
-    void sentencia() throws LexicalException, SyntacticException, IOException {
+    void sentencia() throws LexicalException, SyntacticException, IOException, SemanticException {
         if(actualToken.getId().equals(";")){
             match(";");
         }else if(Primeros.pAsignacionOLlamada.contiene(actualToken.getId())){
@@ -381,7 +382,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    void metIf() throws LexicalException, SyntacticException, IOException {
+    void metIf() throws LexicalException, SyntacticException, IOException, SemanticException {
         match("if");
         match("(");
         expresion();
@@ -390,7 +391,7 @@ public class SyntacticAnalyzer {
         ifConElse();
     }
 
-    void ifConElse() throws LexicalException, SyntacticException, IOException {
+    void ifConElse() throws LexicalException, SyntacticException, IOException, SemanticException {
         if(actualToken.getId().equals("else")){
             match("else");
             sentencia();
@@ -399,7 +400,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    void metWhile() throws LexicalException, SyntacticException, IOException {
+    void metWhile() throws LexicalException, SyntacticException, IOException, SemanticException {
         match("while");
         match("(");
         expresion();

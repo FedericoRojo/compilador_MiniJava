@@ -25,6 +25,8 @@ public class Attribute {
         this.type = type;
     }
 
+
+
     public Token getToken(){ return this.token; }
 
     public void checkWellDefined() throws SemanticException {

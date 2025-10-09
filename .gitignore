@@ -31,3 +31,5 @@ bin/
 compiladorMiniJava.iml
 /.idea
 ejemplo.txt
+/src/META-INF/
+/src/test/

@@ -2,10 +2,10 @@
 //Redefinición incorrecta de metodo
 
 class A{
-    void m1(int a);
+    void m1(int a){}
 }
 
 class B extends A{
-    void m1(A b);
+    void m1(A b){}
 }
 
