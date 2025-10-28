@@ -1,11 +1,9 @@
-///[Error:X|5]
-//
+///[Error:C|5]
+//Parametro de un tipo no declarado
 
-class A {
-    X x;
+class A{
+    void m1(C x){}
 }
-
-
 
 
 

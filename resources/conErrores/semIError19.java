@@ -1,9 +1,8 @@
-///[Error:m1|5]
-//Clase concreta con metodo abstracto
+///[Error:B|5]
+//Atributo con tipo no declarado
 
 class A{
-    abstract m1(){}
+    B x;
 }
-
 
 

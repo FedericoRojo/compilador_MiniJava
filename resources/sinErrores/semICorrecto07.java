@@ -1,17 +1,17 @@
 ///[SinErrores]
-// Clases predefinidas y metodos predefinidos
+// Control simple herencia
 
+class A {
 
-class A{
-    int a;
 }
 
-class B{
-    int a;
+class B extends A{
+
 }
 
 
 
-
-
-
+class Init{
+    static void main()
+    { }
+}

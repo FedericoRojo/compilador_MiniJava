@@ -1,12 +1,8 @@
-///[Error:m1|9]
-//Redefinicion de un metodo static
+///[Error:a|6]
+//Atributos duplicados
 
 class A{
-    static B m1(){}
+    int a;
+    int a;
 }
-
-class B extends A{
-    B m1(){}
-}
-
 

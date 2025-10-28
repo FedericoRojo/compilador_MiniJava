@@ -1,5 +1,6 @@
 package TablaSimbolo;
 
+import ast.Bloque;
 import exceptions.SemanticException;
 import model.*;
 
@@ -11,7 +12,7 @@ public class TablaSimbolo {
     TypeTable typeTable;
     Clase currentClass;
     GenericMethod currentMethod;
-
+    Bloque currentBlock;
 
     private TablaSimbolo() throws SemanticException {
         clases = new HashMap<>();
@@ -19,6 +20,14 @@ public class TablaSimbolo {
         currentClass = null;
         currentMethod = null;
         initBaseClasses();
+    }
+
+    public Bloque getCurrentBlock(){
+        return this.currentBlock;
+    }
+
+    public void setCurrentBlock(Bloque b){
+        this.currentBlock = b;
     }
 
     public static TablaSimbolo getInstance() throws SemanticException {
@@ -44,6 +53,12 @@ public class TablaSimbolo {
         }
     }
 
+    public void checkSentences() throws SemanticException{
+        for(Clase c: clases.values()){
+            c.checkSentences();
+        }
+    }
+
 
     private void initBaseClasses() throws SemanticException {
         Clase cObject = new Clase( new Token("-1", "Object", -1));
@@ -57,9 +72,11 @@ public class TablaSimbolo {
         Token charType = new Token("-1", "char", -1);
         Token stringType = new Token("-1", "String", -1);
 
-        Method debugIMethod = new Method( new Token("-1", "static", -1),
+        Method debugIMethod = new
+                Method( new Token("-1", "static", -1),
                 resolveType(voidType),
-                new Token("-1", "debugPrint", -1));
+                new Token("-1", "debugPrint", -1),
+                cObject);
         debugIMethod.setHasBlock(true);
         debugIMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType)));
         cObject.addMethod( debugIMethod );
@@ -67,20 +84,22 @@ public class TablaSimbolo {
 
         Method mread = new Method( new Token("-2", "static", -2),
                 resolveType(intType),
-                new Token("-2", "read", -2));
+                new Token("-2", "read", -2),
+                cSystem);
         mread.setHasBlock(true);
         cSystem.addMethod( mread );
 
         Method printBMethod = new Method( new Token("-2", "static", -2),
                             resolveType(voidType),
-                            new Token("-2", "printB", -2));
+                            new Token("-2", "printB", -2),
+                cSystem);
         printBMethod.addParameter(new Parameter(new Token("-2", "b", -2), resolveType(booleanType) ));
         printBMethod.setHasBlock(true);
         cSystem.addMethod(printBMethod);
 
         Method printCMethod = new Method( new Token("-2", "static", -2),
                                         resolveType(voidType),
-                                        new Token("-2", "printC", -2));
+                                        new Token("-2", "printC", -2), cSystem);
         printCMethod.addParameter(new Parameter(new Token("-2", "c", -2), resolveType(charType) ));
         printCMethod.setHasBlock(true);
         cSystem.addMethod(printCMethod);
@@ -88,7 +107,7 @@ public class TablaSimbolo {
 
         Method printIMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "printI", -2));
+                new Token("-2", "printI", -2), cSystem);
         printIMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType) ));
         printIMethod.setHasBlock(true);
         cSystem.addMethod(printIMethod);
@@ -96,7 +115,7 @@ public class TablaSimbolo {
 
         Method printSMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "printS", -2));
+                new Token("-2", "printS", -2), cSystem);
         printSMethod.addParameter(new Parameter(new Token("-2", "s", -2), resolveType(stringType) ));
         printSMethod.setHasBlock(true);
         cSystem.addMethod(printSMethod);
@@ -104,14 +123,14 @@ public class TablaSimbolo {
 
         Method printlnMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "println", -2));
+                new Token("-2", "println", -2), cSystem);
         printlnMethod.setHasBlock(true);
         cSystem.addMethod(printlnMethod);
 
 
         Method printBlnMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "printBln", -2));
+                new Token("-2", "printBln", -2), cSystem);
         printBlnMethod.addParameter(new Parameter(new Token("-2", "b", -2), resolveType(booleanType) ));
         printBlnMethod.setHasBlock(true);
         cSystem.addMethod(printBlnMethod);
@@ -119,7 +138,7 @@ public class TablaSimbolo {
 
         Method printClnMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "printCln", -2));
+                new Token("-2", "printCln", -2), cSystem);
         printClnMethod.addParameter(new Parameter(new Token("-2", "c", -2), resolveType(charType) ));
         printClnMethod.setHasBlock(true);
         cSystem.addMethod(printClnMethod);
@@ -127,7 +146,7 @@ public class TablaSimbolo {
 
         Method printIlnMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "printIln", -2));
+                new Token("-2", "printIln", -2), cSystem);
         printIlnMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType) ));
         printIlnMethod.setHasBlock(true);
         cSystem.addMethod(printIlnMethod);
@@ -135,10 +154,13 @@ public class TablaSimbolo {
 
         Method printSlnMethod = new Method( new Token("-2", "static", -2),
                 resolveType(voidType),
-                new Token("-2", "printSln", -2));
+                new Token("-2", "printSln", -2), cSystem);
         printSlnMethod.addParameter(new Parameter(new Token("-2", "s", -2), resolveType(stringType) ));
         printSlnMethod.setHasBlock(true);
         cSystem.addMethod(printSlnMethod);
+
+        cSystem.setParent(cObject.getToken(), cObject);
+        cString.setParent(cObject.getToken(), cObject);
 
         clases.put(cObject.getName(), cObject);
         clases.put(cString.getName(), cString);

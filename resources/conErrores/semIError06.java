@@ -1,6 +1,14 @@
-///[Error:Object|4]
-//Clase con nombre reservado
+///[Error:A|7]
+// 
+class A{
 
-class Object{
+}
 
+class A{
+
+}
+
+class Init{
+    static void main()
+    { }
 }

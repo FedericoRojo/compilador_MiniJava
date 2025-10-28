@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.SemanticException;
+
 public abstract class Type {
     public String name;
     public Token tk;
@@ -9,10 +11,12 @@ public abstract class Type {
         this.tk = t;
     }
 
-    public String getName(){return this.name;}
+    public String getName(){ return this.name;}
 
-    public Token getToken(){return this.tk; }
+    public Token getToken(){ return this.tk; }
 
+    public abstract void esCompatible(Type t) throws SemanticException;
+    public abstract void esCompatible(Type t, Token token) throws SemanticException;
 }
 
 

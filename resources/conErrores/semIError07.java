@@ -1,14 +1,15 @@
-///[Error:A|4]
-//Herencia circular
+///[Error:C|7]
 
-class A extends C{
-
-}
-
-class B extends A{
+class A{
 
 }
 
-class C extends B{
+class B extends C{
 
+}
+
+
+class Init{
+    static void main()
+    { }
 }

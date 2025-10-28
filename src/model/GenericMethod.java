@@ -1,7 +1,8 @@
 package model;
 
+import ast.NodoSentencia;
+import ast.NodoVarLocal;
 import exceptions.SemanticException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +12,38 @@ public class GenericMethod {
     String name;
     Token token;
     List<Parameter> parameters;
+    HashMap<Token, NodoVarLocal> variables;
+    List<NodoSentencia> codeBlock;
+    Clase owner;
     boolean hasBlock;
 
-    public GenericMethod(String name, Token token){
+
+    public GenericMethod(String name, Token token, Clase owner){
         this.name = name;
         this.token = token;
+        this.owner = owner;
         this.parameters = new ArrayList<>();
         this.hasBlock = false;
+        this.codeBlock = new ArrayList<>();
+    }
+
+    public void addSentenceNodeToBlock(NodoSentencia sentence) throws SemanticException {
+        if(sentence instanceof NodoVarLocal){
+            if( variables.get(sentence.getToken()) != null){
+                throw new SemanticException(sentence.getToken(), "Ya existe una variable con ese mismo nombre en este metodo");
+            }
+            variables.put(sentence.getToken(), (NodoVarLocal) sentence);
+        }
+        codeBlock.add(sentence);
+    }
+
+    public void checkSentences() throws SemanticException{
+        //Aca falta ver que no recorra metodos que no son mios
+        if(codeBlock != null) {
+            for (NodoSentencia n : codeBlock) {
+                n.check();
+            }
+        }
     }
 
     public void setHasBlock(boolean b){this.hasBlock = b;}
@@ -53,8 +79,16 @@ public class GenericMethod {
         return toReturn;
     }
 
-
     public List<Parameter> getParameters(){ return this.parameters; }
+
+    public Type searchVarInParameters(Token tk){
+        for (Parameter p: parameters){
+            if(tk.getLexeme().equals(p.getName())){
+                return p.getType();
+            }
+        }
+        return null;
+    }
 
     public void addParameter(Parameter p) throws SemanticException {
         for (Parameter existing : parameters) {

@@ -2,6 +2,8 @@ package model;
 
 
 import TablaSimbolo.TablaSimbolo;
+import ast.NodoExpresion;
+import ast.NodoSentencia;
 import exceptions.SemanticException;
 import java.util.Objects;
 
@@ -9,9 +11,8 @@ public class Method extends GenericMethod{
     String modifier;
     Type returnType;
 
-
-    public Method(Token modifier, Type typeMethod, Token idMet){
-        super(idMet.getLexeme(), idMet);
+    public Method(Token modifier, Type typeMethod, Token idMet, Clase c){
+        super(idMet.getLexeme(), idMet, c);
         this.modifier = modifier != null ? modifier.getLexeme() : null;
         this.returnType = typeMethod;
     }
@@ -29,7 +30,6 @@ public class Method extends GenericMethod{
     public String getName() {
         return name;
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -57,10 +57,6 @@ public class Method extends GenericMethod{
         super.checkWellDefined();
     }
 
-    public void consolidateMethod(){
-
-    }
-
     public boolean isFinal(){
         return Objects.equals(modifier, "final");
     }
@@ -70,16 +66,23 @@ public class Method extends GenericMethod{
     }
 
     public boolean hasSameSignature(Method m){
-        return ( this.name.equals(m.getName())
-                && (Objects.equals( this.returnType != null ? this.returnType.getName() : null,
-                                    m.getReturnType() != null ? m.getReturnType().getName() : null))
-                && super.hasSameParameters( m.getParameters() )
-                );
+        if (!this.name.equals(m.getName())) return false;
+
+        String thisReturn = (this.returnType != null) ? this.returnType.getName() : null;
+        String otherReturn = (m.getReturnType() != null) ? m.getReturnType().getName() : null;
+        if (!Objects.equals(thisReturn, otherReturn)) return false;
+
+
+        if (this.isStatic() != m.isStatic()) return false;
+        if (this.isFinal()  != m.isFinal())  return false;
+
+        return super.hasSameParameters(m.getParameters());
     }
 
     public Type getReturnType() {
         return returnType;
     }
+
 
     public void setReturnType(Type returnType) {
         this.returnType = returnType;

@@ -1,11 +1,10 @@
-///[Error:String|4]
-//
+///[Error:A|6]
+//Clase con mas de 1 constructor
 
-class String {
-
+class A{
+    public A(){}
+    public A(int x){}
 }
-
-
 
 
 

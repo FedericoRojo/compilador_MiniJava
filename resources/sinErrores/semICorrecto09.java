@@ -1,12 +1,18 @@
 ///[SinErrores]
-// Clases predefinidas y metodos predefinidos
-
-abstract class A{
-    abstract void m1();
+// Prueba atributos y herencia
+class A  {
+    int x;
+    B y;
+}
+class B extends A {
+   A z;
 }
 
-class B extends A{
-    void m1(){}
+
+
+class Init{
+    static void main()
+    { }
 }
 
 

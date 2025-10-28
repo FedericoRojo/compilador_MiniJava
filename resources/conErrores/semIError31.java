@@ -1,10 +1,8 @@
-///[Error:m1|6]
-//
+///[Error:m|5]
+//Static no puede sobreescribir static
 
-class A {
-    void m1(){}
-    void m1(){}
-}
+class P { static int m() { return 0; } }
+class C extends P { static int m() { return 1; } }
 
 
 

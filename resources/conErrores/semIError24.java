@@ -1,10 +1,9 @@
-///[Error:C|5]
-//Parametro de un tipo no declarado
+///[Error:m1|5]
+//Clase concreta con metodo abstracto
 
 class A{
-    void m1(C x){}
+    abstract m1(){}
 }
-
 
 
 

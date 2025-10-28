@@ -1,10 +1,12 @@
-///[Error:Aa|5]
-//Constructor con nombre distinto a la clase asociada
+///[Error:m1|9]
+//Sobrecarga con tipo de retorno distinto
 
 class A{
-    public Aa(){}
+    B m1(){}
 }
 
-
+class B extends A{
+    int m1(){}
+}
 
 

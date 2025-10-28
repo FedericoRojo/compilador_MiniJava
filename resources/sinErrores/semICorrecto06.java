@@ -1,13 +1,15 @@
 ///[SinErrores]
-// Clases predefinidas y metodos predefinidos
+//Control simple de declaracion de clases con nombres validos
 
-class Main {
-    static void main() {
-        System.printI(5);
-        Object.debugPrint(7);
-    }
+class A{
+
 }
 
+class B{
 
+}
 
-
+class Init{
+    static void main()
+    { }
+}

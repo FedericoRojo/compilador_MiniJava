@@ -1,11 +1,12 @@
-///[Error:A|6]
-//Clase con mas de 1 constructor
+///[Error:m1|9]
+//Redefinicion de un metodo static
 
 class A{
-    public A(){}
-    public A(int x){}
+    static B m1(){}
 }
 
-
+class B extends A{
+    B m1(){}
+}
 
 

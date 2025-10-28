@@ -2,9 +2,8 @@
 //
 
 class A {
-    void m1(X x){}
+    X x;
 }
-
 
 
 

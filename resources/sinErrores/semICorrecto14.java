@@ -1,16 +1,13 @@
 ///[SinErrores]
-// 
+// Clases predefinidas y metodos predefinidos
 
-class A {
-    int a1;
-    void m1(){}
+abstract class A{
+    abstract void m1();
 }
 
 class B extends A{
-    int b1;
-    void m2(){}
+    void m1(){}
 }
-
 
 
 

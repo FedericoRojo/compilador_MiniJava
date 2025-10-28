@@ -1,11 +1,10 @@
-///[Error:m1|9]
-//Redefinición incorrecta de metodo
+///[Error:B|8]
+//Clase abstract hereda de una concreta
 
 class A{
-    void m1(int a){}
+
 }
 
-class B extends A{
-    void m1(A b){}
-}
+abstract class B extends A{
 
+}

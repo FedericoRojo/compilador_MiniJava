@@ -1,11 +1,13 @@
-///[Error:C|6]
-//Clase concreta no implementa metodo abstracto heredado
+///[Error:B|8]
+//Clase concreta hereda metodo abstracto y no lo redefine
 
-abstract class A { abstract int m(); }
-abstract class B extends A { }
-class C extends B { }
+abstract class A{
+    abstract void m1();
+}
 
+class B extends A{
 
+}
 
 
 

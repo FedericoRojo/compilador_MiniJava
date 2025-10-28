@@ -1,7 +1,15 @@
 ///[SinErrores]
-// 
+// Clases predefinidas y metodos predefinidos
 
-abstract class A { }
+
+class A{
+    int a;
+}
+
+class B{
+    int a;
+}
+
 
 
 

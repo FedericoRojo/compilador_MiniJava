@@ -1,12 +1,6 @@
-///[Error:m1|9]
-//Sobrecarga con tipo de retorno distinto
+///[Error:B|6]
+//Clase static no puede ser extendida
 
-class A{
-    B m1(){}
-}
+static class A{ }
 
-class B extends A{
-    int m1(){}
-}
-
-
+class B extends A{  }

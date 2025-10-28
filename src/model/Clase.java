@@ -19,7 +19,8 @@ public class Clase {
     HashMap<String, Attribute> attributes;
     HashMap<String, Method> methods;
     HashMap<String, Constructor> constructors;
-    boolean consolidated;
+    boolean consolidatedMethods;
+    boolean consolidatedAttributes;
 
     public Clase(Token c){
         this.parent = new HashMap<>();
@@ -30,16 +31,14 @@ public class Clase {
         this.token = c;
         this.declaredInLineNumber = c.lineNumber;
         this.modifier = "";
-        this.consolidated = false;
+        this.consolidatedMethods = false;
+        this.consolidatedAttributes = false;
     }
 
     public int getDeclaredInLineNumber() {
         return declaredInLineNumber;
     }
 
-    public void setDeclaredInLineNumber(int declaredInLineNumber) {
-        this.declaredInLineNumber = declaredInLineNumber;
-    }
 
     public String getName() {
         return name;
@@ -57,6 +56,44 @@ public class Clase {
         this.modifier = modifier;
     }
 
+    public Type existeVariable(Token tk){
+        for(Attribute a: attributes.values()){
+            if(a.getName().equals(tk.getLexeme())){
+                return a.getType();
+            }
+        }
+        return null;
+    }
+
+    public Type existeMetodo(Token tk){
+        for(Method m: methods.values()){
+            if(m.getName().equals(tk.getLexeme())){
+                return m.getReturnType();
+            }
+        }
+        return null;
+    }
+
+    public Method getMethod(Token tk){
+        for(Method m: methods.values()){
+            if(m.getName().equals(tk.getLexeme())){
+                return m;
+            }
+        }
+        return null;
+    }
+
+
+    public void checkSentences() throws SemanticException {
+        for (Method m : methods.values()) {
+            if(m.owner.getName().equals(this.getName())) {
+                m.checkSentences();
+            }
+        }
+        if(!isAbstractClass()) {
+            getConstructor().checkSentences();
+        }
+    }
 
     public Clase getParent() throws SemanticException {
         Clase c = null;
@@ -105,36 +142,40 @@ public class Clase {
     }
 
     public void consolidate() throws SemanticException{
-        if(! this.consolidated  ) {
             consolidateMethods();
             consolidateAtrributes();
-            this.consolidated = true;
-        }
     }
 
     public HashMap<String, Method> getMethods(){ return this.methods; }
 
     public void consolidateAtrributes() throws SemanticException{
-        Clase currentParent = getParent();
-        if( currentParent != null && !currentParent.getName().equals("Object")){
-            currentParent.consolidateAtrributes();
-            HashMap<String, Attribute> actualAttributes = this.attributes;
-            for(Attribute aParent: currentParent.getAttributes().values()){
-                Attribute aActual = actualAttributes.get(aParent.getName());
-                if(aActual == null){
-                    actualAttributes.put(aParent.getName(), aParent);
-                }else{
-                    throw new SemanticException(aActual.getToken(), "Error: la clase "+this.getName()+" tiene un atributo '"+aActual.getName()+"' con el mismo nombre que el de su padre");
+        if(consolidatedAttributes == false && !isObjectClass()) {
+            Clase currentParent = getParent();
+            if (currentParent != null && !currentParent.isObjectClass()) {
+                currentParent.consolidateAtrributes();
+                HashMap<String, Attribute> actualAttributes = this.attributes;
+                for (Attribute aParent : currentParent.getAttributes().values()) {
+                    Attribute aActual = actualAttributes.get(aParent.getName());
+                    if (aActual == null) {
+                        actualAttributes.put(aParent.getName(), aParent);
+                    } else {
+                        throw new SemanticException(aActual.getToken(), "Error: la clase " + this.getName() + " tiene un atributo '" + aActual.getName() + "' con el mismo nombre que el de su padre");
+                    }
                 }
             }
+            checkAttributes();
+            consolidatedAttributes = true;
         }
-        checkAttributes();
     }
 
     public HashMap<String, Attribute> getAttributes(){ return this.attributes; }
 
+    public boolean isObjectClass(){
+        return this.getName().equals("Object");
+    }
+
     public void consolidateMethods() throws SemanticException {
-        if(!this.consolidated) {
+        if(!this.consolidatedMethods && !isObjectClass()) {
             Clase currentParent = getParent();
             if (currentParent != null) {
                 currentParent.consolidateMethods();
@@ -151,6 +192,7 @@ public class Clase {
 
             }
             checkMethods();
+            consolidatedMethods = true;
         }
     }
 
@@ -207,7 +249,7 @@ public class Clase {
     }
 
     public void checkParent()throws SemanticException{
-        if(!this.getName().equals("Object")) {
+        if(!isObjectClass()) {
             if (parent.isEmpty()) {
                 Clase c = TablaSimbolo.getInstance().getClassByString("Object");
                 parent.put(c.getToken(), c);
@@ -216,7 +258,7 @@ public class Clase {
                 Clase c = TablaSimbolo.getInstance().getClassByString(key.getLexeme());
 
                 if (c != null) {
-                    if (this.isAbstractClass() && !c.isAbstractClass() && !c.getName().equals("Object")) {
+                    if (this.isAbstractClass() && !c.isAbstractClass() && !c.isObjectClass()) {
                         throw new SemanticException(token, "Error: la clase "+this.getName()+" es asbtracta e intenta heredar de una concreta "+c.getName());
                     }
                     if (c.isStaticClass() || c.isFinalClass()) {
@@ -246,7 +288,7 @@ public class Clase {
         Set<Clase> visitados = new HashSet<>();
 
         Clase actual = c;
-        while ( !actual.getName().equals("Object") && !actual.getParent().getToken().getLexeme().equals("Object") ) {
+        while ( !actual.isObjectClass() && !actual.getParent().getToken().getLexeme().equals("Object") ) {
             Clase aParent = actual.getParent();
 
             if (visitados.contains(aParent)) {
@@ -276,6 +318,17 @@ public class Clase {
                 c.checkWellDefined();
             }
         }
+    }
+
+    public boolean esSubtipoDe(Clase otraClase) throws SemanticException {
+        Clase actual = this;
+        while (actual != null) {
+            if (actual.getName().equals(otraClase.getName())) {
+                return true;
+            }
+            actual = actual.getParent();
+        }
+        return false;
     }
 
 }

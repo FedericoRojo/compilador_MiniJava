@@ -1,10 +1,12 @@
-///[Error:x|5]
-//Metodo con 2 parametros de igual nombre
+///[Error:m1|9]
+//Redefinicion de un metodo final
 
 class A{
-    void m1(int x, A x){}
+    final B m1(){}
 }
 
-
+class B extends A{
+    B m1(){}
+}
 
 

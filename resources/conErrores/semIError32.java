@@ -1,12 +1,8 @@
-///[Error:m1|9]
+///[Error:String|4]
 //
 
-class A {
-    final void m1(){}
-}
+class String {
 
-class B extends A{
-    void m1(){}
 }
 
 

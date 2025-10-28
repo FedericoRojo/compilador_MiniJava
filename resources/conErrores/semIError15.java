@@ -1,8 +1,6 @@
-///[Error:B|5]
-//Metodo con tipo no declarado
+///[Error:B|6]
+//Clase final no puede ser extendida
 
-class A{
-    B m1(){}
-}
+final class A{ }
 
-
+class B extends A{  }

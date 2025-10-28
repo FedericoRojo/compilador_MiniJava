@@ -1,12 +1,13 @@
-///[Error:B|10]
-//Clase abstract hereda de una concreta
+///[Error:A|4]
 
-class A{
-    void m1(){
-
-    }
+abstract class A{
+    public A(){}
 }
 
-abstract class B extends A{
 
+
+
+class Init{
+    static void main()
+    { }
 }

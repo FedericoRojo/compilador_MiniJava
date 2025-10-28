@@ -1,6 +1,11 @@
-///[Error:B|6]
-//Clase final no puede ser extendida
+///[Error:m1|5]
+//Tambien podria ser el token abstract
 
-final class A{ }
+class A{
+    abstract void m1(){}
+}
 
-class B extends A{  }
+class Init{
+    static void main()
+    { }
+}

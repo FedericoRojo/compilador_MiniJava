@@ -1,10 +1,9 @@
-///[Error:m|5]
-//Static no puede sobreescribir static
+///[Error:Aa|5]
+//Constructor con nombre distinto a la clase asociada
 
-class P { static int m() { return 0; } }
-class C extends P { static int m() { return 1; } }
-
-
+class A{
+    public Aa(){}
+}
 
 
 

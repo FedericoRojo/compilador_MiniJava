@@ -32,6 +32,7 @@ public class Main {
 
             TablaSimbolo.getInstance().checkWellDefined();
             TablaSimbolo.getInstance().consolidate();
+            TablaSimbolo.getInstance().checkSentences();
             success();
 
         }catch (IOException e) {
@@ -69,6 +70,8 @@ public class Main {
         System.out.println("Compilación exitosa");
         System.out.println("[SinErrores]");
     }
+
+
 
 
 }

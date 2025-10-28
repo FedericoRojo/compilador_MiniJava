@@ -1,12 +1,11 @@
 ///[Error:m1|9]
-//Redefinicion de un metodo final
+//Redefinición incorrecta de metodo
 
 class A{
-    final B m1(){}
+    void m1(int a){}
 }
 
 class B extends A{
-    B m1(){}
+    void m1(A b){}
 }
-
 

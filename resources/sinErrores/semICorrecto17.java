@@ -1,0 +1,9 @@
+///[SinErrores]
+// 
+
+abstract class A { }
+
+
+
+
+

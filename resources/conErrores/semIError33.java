@@ -1,10 +1,14 @@
-///[Error:X|5]
+///[Error:m2|8]
 //
 
 class A {
-    X m1(){}
-}
+    void m1(){
 
+    }
+    abstract void m2(){
+
+    }
+}
 
 
 

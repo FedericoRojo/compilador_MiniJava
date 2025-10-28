@@ -1,14 +1,9 @@
-///[Error:x|9]
-//
+///[Error:C|6]
+//Clase concreta no implementa metodo abstracto heredado
 
-class A {
-    B x;
-}
-
-class B extends A {
-    B x;
-}
-
+abstract class A { abstract int m(); }
+abstract class B extends A { }
+class C extends B { }
 
 
 

@@ -1,8 +1,14 @@
-///[Error:a|6]
-//Atributos duplicados
+///[Error:A|4]
+//Herencia circular
 
-class A{
-    int a;
-    int a;
+class A extends C{
+
 }
 
+class B extends A{
+
+}
+
+class C extends B{
+
+}

@@ -1,10 +1,12 @@
 ///[SinErrores]
-// 
+// Clases predefinidas y metodos predefinidos
 
-abstract class A { abstract int m(); }
-abstract class B extends A { int k() { return 1; } }
-class C extends B { int m() { return 0; } }
-
+class Main {
+    static void main() {
+        System.printI(5);
+        Object.debugPrint(7);
+    }
+}
 
 
 

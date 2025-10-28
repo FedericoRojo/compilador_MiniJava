@@ -1,6 +1,6 @@
-///[Error:B|6]
-//Clase static no puede ser extendida
+///[Error:Object|4]
+//Clase con nombre reservado
 
-static class A{ }
+class Object{
 
-class B extends A{  }
+}
