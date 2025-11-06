@@ -16,4 +16,7 @@ public class NodoNull extends NodoPrimitivo{
     public Type check() throws SemanticException {
         return new NullType();
     }
+
+    public void generate(){
+    }
 }

@@ -5,7 +5,7 @@ import model.*;
 
 import java.util.List;
 
-public class NodoVarLocal extends NodoSentencia {
+public class NodoVarLocal extends NodoSentencia implements VarGeneral {
     NodoExpresion contenido;
     Type tipo;
     GenericMethod metodo;

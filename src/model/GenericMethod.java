@@ -16,6 +16,7 @@ public class GenericMethod {
     List<NodoSentencia> codeBlock;
     Clase owner;
     boolean hasBlock;
+    int offset;
 
 
     public GenericMethod(String name, Token token, Clase owner){
@@ -81,10 +82,10 @@ public class GenericMethod {
 
     public List<Parameter> getParameters(){ return this.parameters; }
 
-    public Type searchVarInParameters(Token tk){
+    public Parameter searchVarInParameters(Token tk){
         for (Parameter p: parameters){
             if(tk.getLexeme().equals(p.getName())){
-                return p.getType();
+                return p;
             }
         }
         return null;

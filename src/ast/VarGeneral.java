@@ -1,4 +1,4 @@
 package ast;
 
-public class VarGeneral {
+public interface VarGeneral {
 }

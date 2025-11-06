@@ -4,6 +4,7 @@ import analizers.SyntacticAnalyzer;
 import exceptions.LexicalException;
 import exceptions.SemanticException;
 import exceptions.SyntacticException;
+import sourcemanager.GeneratorManager;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
 
@@ -22,17 +23,22 @@ public class Main {
         try{
             String fileName = args[0];
             //String fileName = "src/test/ejemplo.txt";
+            String outFileName = args[1];
 
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
             LexicAnalyzer aLexico = new LexicAnalyzer(sourceManager);
             SyntacticAnalyzer sA = new SyntacticAnalyzer(aLexico);
+            GeneratorManager gm = GeneratorManager.getInstance(outFileName);
 
             sA.start();
 
             TablaSimbolo.getInstance().checkWellDefined();
             TablaSimbolo.getInstance().consolidate();
             TablaSimbolo.getInstance().checkSentences();
+            TablaSimbolo.getInstance().generate();
+            gm.close();
+
             success();
 
         }catch (IOException e) {
@@ -46,6 +52,7 @@ public class Main {
         }
 
         TablaSimbolo.removeInstance();
+        GeneratorManager.removeInstance();
     }
 
     public static void printLexError(LexicalException e){

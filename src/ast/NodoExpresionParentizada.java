@@ -16,4 +16,9 @@ public class NodoExpresionParentizada extends NodoPrimario {
     public Type check() throws SemanticException {
         return exp.check();
     }
+
+
+    public void generate(){
+
+    }
 }

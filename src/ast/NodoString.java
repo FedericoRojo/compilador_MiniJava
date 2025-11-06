@@ -20,4 +20,7 @@ public class NodoString extends NodoPrimario{
         refType.setAssociatedClass(TablaSimbolo.getInstance().getClassByString("String"));
         return refType;
     }
+
+    public void generate(){
+    }
 }

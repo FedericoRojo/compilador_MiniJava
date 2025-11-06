@@ -3,6 +3,7 @@ package ast;
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.List;
 public class NodoLlamadaMetodoEstatico extends NodoPrimario{
     List<NodoExpresion> argumentos;
     Clase clase;
+    String label;
 
     public NodoLlamadaMetodoEstatico(Token methodName, List<NodoExpresion> list, Token className) throws SemanticException {
         super(methodName);
+        this.label = "lblMet"+methodName.getLexeme()+"@"+className.getLexeme();
         this.argumentos = new ArrayList<>(list);
         this.clase = TablaSimbolo.getInstance().getClassByString(className.getLexeme());
     }
@@ -67,5 +70,14 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
             tipoArgumento.esCompatible(tipoParametro, token);
         }
 
+    }
+
+    public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        for(NodoExpresion e: argumentos){
+            e.generate();
+        }
+        generator.gen("PUSH "+label+"; apila el metodo");
+        generator.gen("CALL ; Llama al metodo en el tope de la pila");
     }
 }

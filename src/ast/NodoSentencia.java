@@ -14,4 +14,6 @@ public abstract class NodoSentencia {
     public void setToken(Token tk){ this.token = tk;}
 
     public abstract void check() throws SemanticException;
+
+    public abstract void generate();
 }
