@@ -638,7 +638,7 @@ public class SyntacticAnalyzer {
         NodoPrimario toR;
         if(Primeros.pArgsActuales.contiene(actualToken.getId())){
             List<NodoExpresion> argsList = argsActuales();
-            toR = new NodoLlamadaMetodo(tk, argsList, ts.getCurrentClass());
+            toR = new NodoLlamadaMetodo(tk, argsList, ts.getCurrentClass(), ts.getCurrentMethod());
         }else{
             toR = new NodoVar(tk, ts.getCurrentClass(), ts.getCurrentMethod(), ts.getCurrentBlock());
         }
@@ -720,7 +720,7 @@ public class SyntacticAnalyzer {
         NodoPrimario newEncadenado;
         if(Primeros.pArgsActuales.contiene(actualToken.getId())){
             List<NodoExpresion> argsList = argsActuales();
-            newEncadenado = new NodoLlamadaMetodo(tk, argsList, ts.getCurrentClass());
+            newEncadenado = new NodoLlamadaMetodo(tk, argsList, ts.getCurrentClass(), ts.getCurrentMethod());
         }else{
             newEncadenado = new NodoVar(tk, ts.getCurrentClass(), ts.getCurrentMethod(), ts.getCurrentBlock());
         }

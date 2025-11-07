@@ -10,15 +10,20 @@ import java.util.List;
 public class NodoLlamadaMetodoEstatico extends NodoPrimario{
     List<NodoExpresion> argumentos;
     Clase clase;
+    Token className;
 
     public NodoLlamadaMetodoEstatico(Token methodName, List<NodoExpresion> list, Token className) throws SemanticException {
         super(methodName);
         this.argumentos = new ArrayList<>(list);
-        this.clase = TablaSimbolo.getInstance().getClassByString(className.getLexeme());
+        this.className = className;
     }
 
     @Override
     public Type check() throws SemanticException {
+        this.clase = TablaSimbolo.getInstance().getClassByString(className.getLexeme());
+        if(this.clase == null){
+            throw new SemanticException(className, "Se intenta acceder a una clase que no existe");
+        }
         Method method = clase.getMethod(token);
 
         if(method == null ){

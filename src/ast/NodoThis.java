@@ -36,9 +36,17 @@ public class NodoThis extends NodoPrimario{
             if( encadenado instanceof NodoLlamadaMetodo nodoLlamadaMetodo){
                 Method m = c.getMethod(nodoLlamadaMetodo.getToken());
                 if(m.isStatic()){
-                    throw new SemanticException(encadenado.getToken(), "No se puede llamar a un metodo estatico sobre una instancia de una clase");
+                    throw new SemanticException(encadenado.getToken(), "No se puede llamar a un metodo estatico con this");
                 }
             }
+
+            if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
+                encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
+            }
+            if(encadenado instanceof NodoVar encadenadoNodoVar){
+                encadenadoNodoVar.setClassOfMyLeftChain(c);
+            }
+
             return encadenado.check();
         }
         return type;

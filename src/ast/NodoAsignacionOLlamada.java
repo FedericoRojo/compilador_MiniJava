@@ -32,8 +32,7 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
                         "Una expresión usada como sentencia debe ser una llamada o una asignación");
             }
         }else{
-            if(!(ladoIzquierdo instanceof NodoVar) &&
-                    !esEncadenamientoQueTerminaEnVariable(ladoIzquierdo) ){
+            if( !esEncadenamientoQueTerminaEnVariable(ladoIzquierdo) ){
                 throw new SemanticException(token, "El lado izquierdo de la asignación no es asignable");
             }
 

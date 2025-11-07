@@ -10,13 +10,16 @@ import java.util.Objects;
 
 public class NodoLlamadaMetodo extends NodoPrimario{
     List<NodoExpresion> argumentos;
+    GenericMethod methodInWichIsDeclared;
     Clase inWichClassIsDeclared;
     Clase classOfMyLeftChain;
 
-    public NodoLlamadaMetodo(Token tk, List<NodoExpresion> argumentos, Clase c){
+    public NodoLlamadaMetodo(Token tk, List<NodoExpresion> argumentos, Clase c, GenericMethod m){
         super(tk);
         this.argumentos = argumentos;
         this.inWichClassIsDeclared = c;
+        this.methodInWichIsDeclared = m;
+
     }
 
     public void setClassOfMyLeftChain(Clase c){
@@ -26,7 +29,6 @@ public class NodoLlamadaMetodo extends NodoPrimario{
     @Override
     public Type check() throws SemanticException {
         Method method = resolveGetMethod();
-
 
         checkParameters(method);
 
@@ -54,19 +56,32 @@ public class NodoLlamadaMetodo extends NodoPrimario{
 
         if(classOfMyLeftChain == null) {
             method = inWichClassIsDeclared.getMethod(token);
+
+            methodNotFound(method);
+
+            callingDinamicMethodWithoutInstanceInStaticContext(method);
+
         }else{
             method = classOfMyLeftChain.getMethod(token);
         }
 
+        methodNotFound(method);
+
+        return method;
+    }
+
+    private void methodNotFound(Method method) throws SemanticException {
         if(method == null ){
             throw new SemanticException(token, "Se quiere llamar al metodo  "+token.getLexeme()+" pero no fue declarado");
         }
+    }
 
-        if(method.isStatic()){
-            throw new SemanticException(token, "Se quiere llamar a un metodo estatico en un contexto dinamico");
+    private void callingDinamicMethodWithoutInstanceInStaticContext(Method method) throws SemanticException {
+        if( methodInWichIsDeclared instanceof Method methodContext ){
+            if(methodContext.isStatic() && !method.isStatic()){
+                throw new SemanticException(token, "Se intenta llamar a un metodo dinamico sin especificar la instancia,  en un contexto estatico");
+            }
         }
-
-        return method;
     }
 
     private Type resolveChain(Method method) throws SemanticException {
