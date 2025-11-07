@@ -2,6 +2,7 @@ package ast;
 
 import exceptions.SemanticException;
 import model.Token;
+import sourcemanager.GeneratorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,5 +105,14 @@ public class Bloque extends NodoSentencia {
         }
     }
 
+    public void generate(){
+        for(NodoSentencia sentence: sentencias){
+            sentence.generate();
+        }
+        GeneratorManager generator = GeneratorManager.getInstance();
+        int cantVars = variables.size();
+        generator.gen("FMEM "+cantVars);
+
+    }
 
 }

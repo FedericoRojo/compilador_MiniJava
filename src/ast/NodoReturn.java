@@ -26,4 +26,7 @@ public class NodoReturn extends NodoSentencia{
             tipoRetornoExpresion.esCompatible(tipoRetornoDeclarado, token);
         }
     }
+
+    public void generate(){
+    }
 }

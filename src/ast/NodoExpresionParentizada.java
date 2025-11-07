@@ -39,4 +39,9 @@ public class NodoExpresionParentizada extends NodoPrimario {
         }
         return type;
     }
+
+
+    public void generate(){
+
+    }
 }

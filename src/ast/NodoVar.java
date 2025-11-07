@@ -9,6 +9,7 @@ public class NodoVar extends NodoPrimario{
     Clase classOfMyLeftChain;
     GenericMethod method;
     Bloque bloque;
+    VarGeneral data;
 
 
     public NodoVar(Token tk, Clase c, GenericMethod m, Bloque b){
@@ -27,23 +28,35 @@ public class NodoVar extends NodoPrimario{
         Type varLocalType = null;
 
         if(classOfMyLeftChain == null) {
+
             NodoVarLocal varLocal = bloque.buscarVariableEnAmbito(token);
             if (varLocal != null) {
+                data = varLocal;
                 varLocalType = varLocal.getType();
             }
             if (varLocalType == null) {
-                varLocalType = method.searchVarInParameters(token);
+                Parameter p = method.searchVarInParameters(token);
+                varLocalType = p.getType();
+                data = p;
             }
             if (varLocalType == null) {
-                varLocalType = inWichClassIsDeclared.existeVariable(token);
+                Attribute attribute = inWichClassIsDeclared.existeVariable(token);
+                if(attribute != null){
+                    varLocalType = attribute.getType();
+                    data = attribute;
+                }
                 if(varLocalType != null && method instanceof Method mMethod && mMethod.isStatic()){
                     throw new SemanticException(token, "No se puede acceder a una variable de instancia en un metodo estatico");
                 }
             }
-        }else{
-            varLocalType = classOfMyLeftChain.existeVariable(token);
-        }
 
+        }else{
+            Attribute attribute = classOfMyLeftChain.existeVariable(token);
+            if(attribute != null){
+                varLocalType = attribute.getType();
+                data = attribute;
+            }
+        }
 
         if (varLocalType == null) {
             throw new SemanticException(token, "Se quiere utilizar la variable " + token.getLexeme() + " pero no fue declarada");
@@ -70,6 +83,7 @@ public class NodoVar extends NodoPrimario{
             }
             varLocalType = encadenado.check();
         }
+
         return varLocalType;
     }
 }

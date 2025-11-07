@@ -44,4 +44,8 @@ public class NodoExpresionAsignacion extends NodoExpresion{
         }
         return false;
     }
+
+    public void generate(){
+
+    }
 }

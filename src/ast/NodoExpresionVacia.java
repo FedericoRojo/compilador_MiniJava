@@ -13,4 +13,8 @@ public class NodoExpresionVacia extends NodoExpresion{
     public Type check() {
         return new NullType();
     }
+
+    public void generate(){
+
+    }
 }

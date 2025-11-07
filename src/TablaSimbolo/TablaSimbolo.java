@@ -3,6 +3,7 @@ package TablaSimbolo;
 import ast.Bloque;
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 import java.util.HashMap;
 
@@ -57,6 +58,47 @@ public class TablaSimbolo {
         for(Clase c: clases.values()){
             c.checkSentences();
         }
+    }
+
+    public void generate() throws SemanticException {
+        initGenerate();
+        for(Clase c: clases.values()){
+            c.generate();
+        }
+    }
+
+    public void initGenerate() throws SemanticException {
+
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen(".CODE");
+        Clase mainClass = findMainClass();
+        generator.gen("PUSH lblMetMain@"+mainClass.getName());
+        generator.gen("CALL");
+        generator.gen("HALT");
+        generator.gen("LOADFP ; Inicializacionunidad");
+        generator.gen("LOADSP");
+        generator.gen("STOREFP ;FinalizainicializaciondelRA");
+        generator.gen("LOADHL ;hl");
+        generator.gen("DUP ;hl");
+        generator.gen("PUSH 1 ;1");
+        generator.gen("ADD ;hl+1");
+        generator.gen("STORE 4 ;Guardaresultado(punteroabasedelbloque)");
+        generator.gen("LOAD 3 ;Cargacantidaddeceldasaalojar(parametro)");
+        generator.gen("ADD");
+        generator.gen("STOREHL ;Mueveelheaplimit(hl)");
+        generator.gen("STOREFP");
+        generator.gen("RET 1 ;Retornaeliminandoelparametro");
+    }
+
+    private Clase findMainClass() throws SemanticException {
+        Token tk = new Token("1000", "main", 1000);
+        for (Clase c : clases.values()) {
+            Method main = c.getMethod(tk);
+            if (main != null) {
+                return c;
+            }
+        }
+        throw new SemanticException(tk, "No se encontró un método static void main(String[])");
     }
 
 

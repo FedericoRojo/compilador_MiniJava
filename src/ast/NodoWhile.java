@@ -21,4 +21,7 @@ public class NodoWhile extends NodoSentencia{
         condicion.check().esCompatible(new BooleanType(), token);
         sentencias.check();
     }
+
+    public void generate(){
+    }
 }

@@ -81,4 +81,9 @@ public class NodoExpresionBinaria extends NodoExpresion {
 
         return new BooleanType();
     }
+
+
+    public void generate(){
+
+    }
 }

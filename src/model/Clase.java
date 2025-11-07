@@ -4,6 +4,7 @@ import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import exceptions.SyntacticException;
 import org.w3c.dom.Attr;
+import sourcemanager.GeneratorManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,8 +22,10 @@ public class Clase {
     HashMap<String, Constructor> constructors;
     boolean consolidatedMethods;
     boolean consolidatedAttributes;
+    String label;
 
     public Clase(Token c){
+        this.label = "lblVT"+c.getLexeme();
         this.parent = new HashMap<>();
         this.attributes = new HashMap<>();
         this.methods = new HashMap<>();
@@ -56,10 +59,10 @@ public class Clase {
         this.modifier = modifier;
     }
 
-    public Type existeVariable(Token tk){
+    public Attribute existeVariable(Token tk){
         for(Attribute a: attributes.values()){
             if(a.getName().equals(tk.getLexeme())){
-                return a.getType();
+                return a;
             }
         }
         return null;
@@ -329,6 +332,20 @@ public class Clase {
             actual = actual.getParent();
         }
         return false;
+    }
+
+    public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen(".DATA");
+        generator.gen(this.label+": NOP");
+        generator.gen(".CODE ; Genero los metodos de la clase");
+
+        for(Method m: methods.values()){
+            if(m.owner.getName().equals(this.getName())){
+                m.generate();
+            }
+        }
+        //Falta generar constructor
     }
 
 }

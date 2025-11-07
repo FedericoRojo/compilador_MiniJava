@@ -1,13 +1,15 @@
 package model;
 
 import TablaSimbolo.TablaSimbolo;
+import ast.VarGeneral;
 import exceptions.SemanticException;
 
-public class Attribute {
+public class Attribute implements VarGeneral {
 
     String name;
     Type type;
     Token token;
+    int offset;
 
     public String getName() {
         return name;

@@ -3,6 +3,7 @@ package ast;
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,5 +61,9 @@ public class NodoLlamadaConstructor extends NodoPrimario{
 
             tipoArgumento.esCompatible(tipoParametro, token);
         }
+    }
+
+
+    public void generate(){
     }
 }

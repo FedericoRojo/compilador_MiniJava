@@ -5,14 +5,19 @@ import TablaSimbolo.TablaSimbolo;
 import ast.NodoExpresion;
 import ast.NodoSentencia;
 import exceptions.SemanticException;
+import sourcemanager.GeneratorManager;
+
 import java.util.Objects;
 
 public class Method extends GenericMethod{
     String modifier;
     Type returnType;
+    String label;
 
     public Method(Token modifier, Type typeMethod, Token idMet, Clase c){
+
         super(idMet.getLexeme(), idMet, c);
+        this.label = "lblMet"+idMet.getLexeme()+"@"+c.getName();
         this.modifier = modifier != null ? modifier.getLexeme() : null;
         this.returnType = typeMethod;
     }
@@ -88,5 +93,16 @@ public class Method extends GenericMethod{
         this.returnType = returnType;
     }
 
+    public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen(label+":LOADFP ; apila el valor del RA");
+        generator.gen("LOADSP ; apila el valor del registro sp");
+        generator.gen("STOREFP; almacena el tope de la pila en el registro");
+        for(NodoSentencia sentence: codeBlock){
+            sentence.generate();
+        }
+        generator.gen("STOREFP ; Alamcena el topo de la pila en el registro");
+        generator.gen("RET 0");
+    }
 
 }

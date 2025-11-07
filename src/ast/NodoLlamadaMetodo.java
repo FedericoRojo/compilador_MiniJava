@@ -107,5 +107,8 @@ public class NodoLlamadaMetodo extends NodoPrimario{
         return encadenado.check();
     }
 
+    public void generate(){
+    }
+
 
 }

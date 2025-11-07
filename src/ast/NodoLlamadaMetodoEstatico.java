@@ -3,17 +3,19 @@ package ast;
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import model.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import sourcemanager.GeneratorManager;
 
 public class NodoLlamadaMetodoEstatico extends NodoPrimario{
     List<NodoExpresion> argumentos;
     Clase clase;
     Token className;
+    String label;
 
     public NodoLlamadaMetodoEstatico(Token methodName, List<NodoExpresion> list, Token className) throws SemanticException {
         super(methodName);
+        this.label = "lblMet"+methodName.getLexeme()+"@"+className.getLexeme();
         this.argumentos = new ArrayList<>(list);
         this.className = className;
     }
@@ -24,6 +26,7 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
         if(this.clase == null){
             throw new SemanticException(className, "Se intenta acceder a una clase que no existe");
         }
+
         Method method = clase.getMethod(token);
 
         if(method == null ){
@@ -72,5 +75,14 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
             tipoArgumento.esCompatible(tipoParametro, token);
         }
 
+    }
+
+    public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        for(NodoExpresion e: argumentos){
+            e.generate();
+        }
+        generator.gen("PUSH "+label+"; apila el metodo");
+        generator.gen("CALL ; Llama al metodo en el tope de la pila");
     }
 }

@@ -1,12 +1,14 @@
 package model;
 
 import TablaSimbolo.TablaSimbolo;
+import ast.VarGeneral;
 import exceptions.SemanticException;
 
-public class Parameter {
+public class Parameter implements VarGeneral {
     String name;
     Token token;
     Type type;
+    int offset;
 
     public Parameter(Token param, Type type){
         name = param.getLexeme();

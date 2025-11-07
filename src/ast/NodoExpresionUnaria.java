@@ -36,4 +36,9 @@ public class NodoExpresionUnaria extends NodoExpresion {
     public boolean operadorCompatibleConBoolean(Token t){
         return operador.getLexeme().equals("!");
     }
+
+
+    public void generate(){
+
+    }
 }

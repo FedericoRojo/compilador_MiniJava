@@ -72,4 +72,13 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
         }
         return false;
     }
+
+    public void generate(){
+        if(ladoDerecho == null){
+            ladoDerecho.generate();
+        }else{
+            //ACA hay que hacer algoo
+        }
+    }
+
 }

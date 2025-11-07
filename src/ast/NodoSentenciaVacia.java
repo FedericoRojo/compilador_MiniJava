@@ -13,4 +13,7 @@ public class NodoSentenciaVacia extends NodoSentencia {
 
     }
 
+    public void generate(){
+    }
+
 }

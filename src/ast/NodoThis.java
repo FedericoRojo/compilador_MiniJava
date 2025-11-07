@@ -51,4 +51,7 @@ public class NodoThis extends NodoPrimario{
         }
         return type;
     }
+
+    public void generate(){
+    }
 }

@@ -15,4 +15,6 @@ public abstract class NodoExpresion {
     }
 
     public abstract Type check() throws SemanticException;
+
+    public abstract void generate();
 }
