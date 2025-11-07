@@ -1,9 +1,0 @@
-///[SinErrores]
-// 
-
-abstract class A { }
-
-
-
-
-
