@@ -53,4 +53,8 @@ public class NodoVarLocal extends NodoSentencia implements VarGeneral {
             }
         }
     }
+
+    public void generate(){
+
+    }
 }

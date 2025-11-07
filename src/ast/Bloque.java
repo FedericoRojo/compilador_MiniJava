@@ -110,9 +110,7 @@ public class Bloque extends NodoSentencia {
             sentence.generate();
         }
         GeneratorManager generator = GeneratorManager.getInstance();
-        int cantVars = variables.size();
-        generator.gen("FMEM "+cantVars);
-
+        generator.gen("FMEM "+variables.size());
     }
 
 }

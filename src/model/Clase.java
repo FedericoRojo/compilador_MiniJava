@@ -339,13 +339,19 @@ public class Clase {
         generator.gen(".DATA");
         generator.gen(this.label+": NOP");
         generator.gen(".CODE ; Genero los metodos de la clase");
+        generator.gen("");
 
         for(Method m: methods.values()){
             if(m.owner.getName().equals(this.getName())){
                 m.generate();
             }
         }
-        //Falta generar constructor
+
+        if(!constructors.isEmpty()) {
+            for (Constructor c : constructors.values()) {
+                c.generate();
+            }
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package TablaSimbolo;
 
 import ast.Bloque;
+import ast.BloqueDebugPrint;
 import exceptions.SemanticException;
 import model.*;
 import sourcemanager.GeneratorManager;
@@ -75,17 +76,18 @@ public class TablaSimbolo {
         generator.gen("PUSH lblMetMain@"+mainClass.getName());
         generator.gen("CALL");
         generator.gen("HALT");
-        generator.gen("LOADFP ; Inicializacionunidad");
+        generator.gen("simple_heap_init: RET 0 ; Retorna inmediatamenete");
+        generator.gen("simple_malloc: LOADFP ; Inicializacion unidad");
         generator.gen("LOADSP");
-        generator.gen("STOREFP ;FinalizainicializaciondelRA");
+        generator.gen("STOREFP ;Finaliza inicializacion del RA");
         generator.gen("LOADHL ;hl");
         generator.gen("DUP ;hl");
         generator.gen("PUSH 1 ;1");
         generator.gen("ADD ;hl+1");
-        generator.gen("STORE 4 ;Guardaresultado(punteroabasedelbloque)");
-        generator.gen("LOAD 3 ;Cargacantidaddeceldasaalojar(parametro)");
+        generator.gen("STORE 4 ;Guarda el resultado(un puntero a base del bloque)");
+        generator.gen("LOAD 3 ;Carga cantidad de celdas a alojar(parametro)");
         generator.gen("ADD");
-        generator.gen("STOREHL ;Mueveelheaplimit(hl)");
+        generator.gen("STOREHL ;Mueve el heap limit (hl)");
         generator.gen("STOREFP");
         generator.gen("RET 1 ;Retornaeliminandoelparametro");
     }
@@ -121,6 +123,7 @@ public class TablaSimbolo {
                 cObject);
         debugIMethod.setHasBlock(true);
         debugIMethod.addParameter(new Parameter(new Token("-2", "i", -2), resolveType(intType)));
+        debugIMethod.addSentenceNodeToBlock(new BloqueDebugPrint());
         cObject.addMethod( debugIMethod );
 
 

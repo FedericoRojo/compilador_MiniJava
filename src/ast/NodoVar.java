@@ -86,4 +86,8 @@ public class NodoVar extends NodoPrimario{
 
         return varLocalType;
     }
+
+    public void generate(){
+
+    }
 }

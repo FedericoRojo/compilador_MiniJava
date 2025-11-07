@@ -16,4 +16,8 @@ public class NodoChar extends NodoPrimitivo{
     public Type check() throws SemanticException {
         return new CharType();
     }
+
+    public void generate(){
+
+    }
 }

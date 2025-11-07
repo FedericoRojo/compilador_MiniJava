@@ -3,6 +3,7 @@ package ast;
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class NodoLlamadaMetodo extends NodoPrimario{
     GenericMethod methodInWichIsDeclared;
     Clase inWichClassIsDeclared;
     Clase classOfMyLeftChain;
+    Method myOwnData;
 
     public NodoLlamadaMetodo(Token tk, List<NodoExpresion> argumentos, Clase c, GenericMethod m){
         super(tk);
@@ -35,6 +37,7 @@ public class NodoLlamadaMetodo extends NodoPrimario{
         if(encadenado != null){
             return resolveChain(method);
         }
+        myOwnData = method;
         return method.getReturnType();
     }
 
@@ -108,6 +111,16 @@ public class NodoLlamadaMetodo extends NodoPrimario{
     }
 
     public void generate(){
+        if(myOwnData.isStatic()){
+            GeneratorManager generator = GeneratorManager.getInstance();
+            for(NodoExpresion e: argumentos){
+                e.generate();
+            }
+            generator.gen("PUSH "+myOwnData.getLabel()+"; apila el metodo");
+            generator.gen("CALL ; Llama al metodo en el tope de la pila");
+        }else{
+
+        }
     }
 
 

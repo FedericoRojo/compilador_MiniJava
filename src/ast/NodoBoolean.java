@@ -14,4 +14,8 @@ public class NodoBoolean extends NodoPrimitivo{
     public Type check() {
         return new BooleanType();
     }
+
+    public void generate(){
+        
+    }
 }

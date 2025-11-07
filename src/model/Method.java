@@ -15,7 +15,6 @@ public class Method extends GenericMethod{
     String label;
 
     public Method(Token modifier, Type typeMethod, Token idMet, Clase c){
-
         super(idMet.getLexeme(), idMet, c);
         this.label = "lblMet"+idMet.getLexeme()+"@"+c.getName();
         this.modifier = modifier != null ? modifier.getLexeme() : null;
@@ -35,6 +34,8 @@ public class Method extends GenericMethod{
     public String getName() {
         return name;
     }
+
+    public String getLabel(){return label;}
 
     public void setName(String name) {
         this.name = name;
@@ -102,7 +103,8 @@ public class Method extends GenericMethod{
             sentence.generate();
         }
         generator.gen("STOREFP ; Alamcena el topo de la pila en el registro");
-        generator.gen("RET 0");
+        generator.gen("RET "+parameters.size());
+        generator.gen("");
     }
 
 }

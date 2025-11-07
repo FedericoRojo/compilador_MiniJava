@@ -75,7 +75,7 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
 
     public void generate(){
         if(ladoDerecho == null){
-            ladoDerecho.generate();
+            ladoIzquierdo.generate();
         }else{
             //ACA hay que hacer algoo
         }

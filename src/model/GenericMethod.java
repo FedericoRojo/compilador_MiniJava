@@ -39,7 +39,6 @@ public class GenericMethod {
     }
 
     public void checkSentences() throws SemanticException{
-        //Aca falta ver que no recorra metodos que no son mios
         if(codeBlock != null) {
             for (NodoSentencia n : codeBlock) {
                 n.check();

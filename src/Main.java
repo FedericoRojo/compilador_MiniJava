@@ -41,6 +41,7 @@ public class Main {
 
             success();
 
+
         }catch (IOException e) {
             System.out.println(e.getMessage());
         } catch (LexicalException e) {

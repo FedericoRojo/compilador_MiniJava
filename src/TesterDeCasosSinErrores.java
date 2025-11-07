@@ -1,5 +1,3 @@
-package minijavaCompiler;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.After;
