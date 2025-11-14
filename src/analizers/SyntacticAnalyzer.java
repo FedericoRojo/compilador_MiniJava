@@ -226,7 +226,9 @@ public class SyntacticAnalyzer {
         ts.setCurrentMethod(newC);
 
         argsFormales();
-        bloque();
+        Bloque b = bloque();
+        ts.setCurrentBlock(null);
+        ts.getCurrentMethod().addSentenceNodeToBlock(b);
     }
 
     Token tipo() throws LexicalException, SyntacticException, IOException {

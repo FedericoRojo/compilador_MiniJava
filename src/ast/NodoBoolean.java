@@ -3,6 +3,7 @@ package ast;
 import model.BooleanType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoBoolean extends NodoPrimitivo{
 
@@ -16,6 +17,7 @@ public class NodoBoolean extends NodoPrimitivo{
     }
 
     public void generate(){
-        
+        int lexema = token.getLexeme().equals("true") ? 1 : 0;
+        GeneratorManager.getInstance().gen( "PUSH "+lexema );
     }
 }

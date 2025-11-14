@@ -2,6 +2,7 @@ package ast;
 
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class NodoVarLocal extends NodoSentencia implements VarGeneral {
     Type tipo;
     GenericMethod metodo;
     Bloque bloque;
+    int offset;
 
     public NodoVarLocal( Token tk, NodoExpresion contenido, GenericMethod m, Bloque b) {
         this.contenido = contenido;
@@ -18,12 +20,18 @@ public class NodoVarLocal extends NodoSentencia implements VarGeneral {
         this.bloque = b;
     }
 
+    public void setOffset(int i){
+        offset = i;
+    }
+
     public Type getType() throws SemanticException {
         if (tipo == null) {
             tipo = contenido.check();
         }
         return tipo;
     }
+
+    public int getOffset(){ return offset; }
 
     public void check() throws SemanticException {
         checkIfExistsInParams();
@@ -55,6 +63,10 @@ public class NodoVarLocal extends NodoSentencia implements VarGeneral {
     }
 
     public void generate(){
-
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen("RMEM 1 ; Reservo espacio para VarLocal");
+        contenido.generate();
+        String offsetModificado = offset == 0 ? "0" : "-"+offset;
+        generator.gen("STORE "+offsetModificado);
     }
 }

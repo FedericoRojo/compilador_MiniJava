@@ -11,6 +11,7 @@ public class Bloque extends NodoSentencia {
     List<NodoSentencia> sentencias = new ArrayList<>();
     Bloque parent;
     List<NodoVarLocal> variables = new ArrayList<>();
+    int contadorOffsetVariables = 0;
 
     public Bloque(){
 
@@ -42,6 +43,8 @@ public class Bloque extends NodoSentencia {
                 throw new SemanticException(varLocal.getToken(), "La variable ya fue declarada en un bloque contenedor");
             }
 
+            varLocal.setOffset(contadorOffsetVariables);
+            contadorOffsetVariables++;
             variables.add(varLocal);
         }
         sentencias.add(s);

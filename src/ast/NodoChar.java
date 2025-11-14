@@ -4,6 +4,7 @@ import exceptions.SemanticException;
 import model.CharType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoChar extends NodoPrimitivo{
 
@@ -18,6 +19,6 @@ public class NodoChar extends NodoPrimitivo{
     }
 
     public void generate(){
-
+        GeneratorManager.getInstance().gen( "PUSH "+token.getLexeme() );
     }
 }

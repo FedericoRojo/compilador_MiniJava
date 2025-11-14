@@ -15,6 +15,7 @@ public class NodoExpresionParentizada extends NodoPrimario {
     @Override
     public Type check() throws SemanticException {
         Type type = exp.check();
+
         if(encadenado !=null ){
             if(type instanceof PrimitiveType){
                 throw new SemanticException(encadenado.getToken(), "No se puede acceder a miembros de un tipo primitivo");
@@ -30,18 +31,25 @@ public class NodoExpresionParentizada extends NodoPrimario {
             }
 
             if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
+                encadenadoLlamadaMetodo.setLeftChain(this);
                 encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
             }
             if(encadenado instanceof NodoVar encadenadoNodoVar){
+                encadenadoNodoVar.setLeftChain(this);
                 encadenadoNodoVar.setClassOfMyLeftChain(c);
             }
             return encadenado.check();
         }
+
         return type;
     }
 
 
-    public void generate(){
 
+    public void generate(){
+        exp.generate();
+        if(encadenado != null){
+            encadenado.generate();
+        }
     }
 }

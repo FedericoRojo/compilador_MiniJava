@@ -21,4 +21,5 @@ public class NodoInt extends NodoPrimitivo{
     public void generate(){
         GeneratorManager.getInstance().gen( "PUSH "+token.getLexeme() );
     }
+
 }

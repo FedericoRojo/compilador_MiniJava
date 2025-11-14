@@ -16,7 +16,6 @@ public class GenericMethod {
     List<NodoSentencia> codeBlock;
     Clase owner;
     boolean hasBlock;
-    int offset;
 
 
     public GenericMethod(String name, Token token, Clase owner){
@@ -55,6 +54,7 @@ public class GenericMethod {
     public void checkWellDefined() throws SemanticException{
         for(Parameter p: parameters){
             p.checkWellDefined();
+            p.setTotalParamsSize(parameters.size());
         }
     }
 
@@ -96,6 +96,8 @@ public class GenericMethod {
                 throw new SemanticException(p.getToken(), "Error: este método ya tiene un parámetro con el mismo nombre");
             }
         }
+        int offsetParam = parameters.size();
         parameters.add(p);
+        p.setOffset(offsetParam);
     }
 }

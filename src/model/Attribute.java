@@ -27,7 +27,9 @@ public class Attribute implements VarGeneral {
         this.type = type;
     }
 
+    public void setOffset(int i){ this.offset = i; }
 
+    public int getOffset(){ return this.offset; }
 
     public Token getToken(){ return this.token; }
 

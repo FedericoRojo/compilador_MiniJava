@@ -14,6 +14,7 @@ public class NodoLlamadaMetodo extends NodoPrimario{
     GenericMethod methodInWichIsDeclared;
     Clase inWichClassIsDeclared;
     Clase classOfMyLeftChain;
+    NodoExpresion leftChain;
     Method myOwnData;
 
     public NodoLlamadaMetodo(Token tk, List<NodoExpresion> argumentos, Clase c, GenericMethod m){
@@ -21,11 +22,16 @@ public class NodoLlamadaMetodo extends NodoPrimario{
         this.argumentos = argumentos;
         this.inWichClassIsDeclared = c;
         this.methodInWichIsDeclared = m;
-
     }
+
+    public Method getAssociatedMethod(){ return this.myOwnData; }
 
     public void setClassOfMyLeftChain(Clase c){
         this.classOfMyLeftChain = c;
+    }
+
+    public void setLeftChain(NodoExpresion exp){
+        this.leftChain = exp;
     }
 
     @Override
@@ -34,10 +40,10 @@ public class NodoLlamadaMetodo extends NodoPrimario{
 
         checkParameters(method);
 
+        myOwnData = method;
         if(encadenado != null){
             return resolveChain(method);
         }
-        myOwnData = method;
         return method.getReturnType();
     }
 
@@ -103,24 +109,81 @@ public class NodoLlamadaMetodo extends NodoPrimario{
 
         if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
             encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
+            encadenadoLlamadaMetodo.setLeftChain(this);
         }
         if(encadenado instanceof NodoVar encadenadoNodoVar){
             encadenadoNodoVar.setClassOfMyLeftChain(c);
+            encadenadoNodoVar.setLeftChain(this);
         }
         return encadenado.check();
     }
 
     public void generate(){
-        if(myOwnData.isStatic()){
-            GeneratorManager generator = GeneratorManager.getInstance();
+        GeneratorManager generator = GeneratorManager.getInstance();
+        if(calledMethodIsStatic()){
+            staticMethodCall();
+        }else{
+            dynamicMethodCall();
+        }
+        generator.gen("");
+    }
+
+    public boolean calledMethodIsStatic(){
+        return myOwnData.isStatic();
+    }
+
+    public boolean calledMethodHasReturn(){
+        return !myOwnData.getReturnType().getName().equals("void");
+    }
+
+    public void staticMethodCall(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        if(calledMethodHasReturn()){
+            generator.gen("RMEM 1; valor de retorno");
+        }
+        for(NodoExpresion e: argumentos){
+            e.generate();
+        }
+        generator.gen("PUSH "+myOwnData.getLabel()+"; apila el metodo");
+        generator.gen("CALL ; Llama al metodo en el tope de la pila");
+    }
+
+    public void dynamicMethodCall(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+
+        if(classOfMyLeftChain != null){
+            if(calledMethodHasReturn()){
+                generator.gen("RMEM 1; valor de retorno");
+                generator.gen("SWAP");
+            }
+
+            for(NodoExpresion e: argumentos){
+                e.generate();
+                generator.gen("SWAP");
+            }
+
+            generator.gen("DUP");
+            generator.gen("LOADREF 0");
+            generator.gen("LOADREF "+myOwnData.getOffset());
+            generator.gen("CALL");
+
+        }else{
+            if(calledMethodHasReturn()){
+                generator.gen("RMEM 1; valor de retorno");
+            }
+
             for(NodoExpresion e: argumentos){
                 e.generate();
             }
-            generator.gen("PUSH "+myOwnData.getLabel()+"; apila el metodo");
-            generator.gen("CALL ; Llama al metodo en el tope de la pila");
-        }else{
+
+            generator.gen("LOAD 3; cargo el this que es el enlace dinamico en este caso");
+            generator.gen("DUP");
+            generator.gen("LOADREF 0");
+            generator.gen("LOADREF "+myOwnData.getOffset());
+            generator.gen("CALL");
 
         }
+
     }
 
 

@@ -2,7 +2,7 @@ package ast;
 
 import sourcemanager.GeneratorManager;
 
-public class BloqueDebugPrint extends Bloque{
+public class BloquePrintILn extends Bloque{
 
     public void generate(){
         GeneratorManager generator = GeneratorManager.getInstance();

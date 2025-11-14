@@ -8,6 +8,7 @@ public class Parameter implements VarGeneral {
     String name;
     Token token;
     Type type;
+    int totalParamSize;
     int offset;
 
     public Parameter(Token param, Type type){
@@ -15,6 +16,11 @@ public class Parameter implements VarGeneral {
         this.token = param;
         this.type = type;
     }
+
+    public void setOffset(int i){offset = i;}
+    public int getOffset(){return offset; }
+    public void setTotalParamsSize(int i){ totalParamSize = i; }
+    public int getTotalParamsSize(){return totalParamSize;}
 
     public void checkWellDefined() throws SemanticException {
         Clase a = TablaSimbolo.getInstance().getClassByString(this.type.getName());
@@ -27,6 +33,7 @@ public class Parameter implements VarGeneral {
                 throw new SemanticException(this.type.getToken().getLineNumber(), this.type.getName(), "Error: el tipo del parametro "+this.getName()+" esta asociado a una clase que no existe");
             }
         }
+
     }
 
     public Token getToken(){ return this.token; }

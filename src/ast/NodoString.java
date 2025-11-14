@@ -5,10 +5,16 @@ import exceptions.SemanticException;
 import model.ReferenceType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoString extends NodoPrimario{
+    String label;
+    private static int contador = 0;
+
     public NodoString(Token tk){
         super(tk);
+        label = "string"+contador;
+        contador++;
     }
 
     @Override
@@ -22,5 +28,10 @@ public class NodoString extends NodoPrimario{
     }
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen(".DATA");
+        generator.gen(label+": DW "+token.getLexeme()+", 0");
+        generator.gen(".CODE");
+        generator.gen("PUSH "+label);
     }
 }

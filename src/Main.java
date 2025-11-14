@@ -20,10 +20,13 @@ public class Main {
             System.exit(1);
         }
 
+
         try{
             String fileName = args[0];
             //String fileName = "src/test/ejemplo.txt";
             String outFileName = args[1];
+
+
 
             SourceManager sourceManager = new SourceManagerImpl();
             sourceManager.open(fileName);
@@ -50,10 +53,11 @@ public class Main {
             printSyntacticError(e);
         }catch (SemanticException e){
             printSemanticException(e);
+        }finally{
+            TablaSimbolo.removeInstance();
+            GeneratorManager.removeInstance();
         }
 
-        TablaSimbolo.removeInstance();
-        GeneratorManager.removeInstance();
     }
 
     public static void printLexError(LexicalException e){

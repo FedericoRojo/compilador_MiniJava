@@ -34,7 +34,4 @@ ejemplo.java
 /src/META-INF/
 /src/test/
 CeIVM-cei2011
-[gen-01.java].out
-[gen-02.java].out
-[gen-03.java].out
-[gen-04.java].out
+\[*\.java\].out

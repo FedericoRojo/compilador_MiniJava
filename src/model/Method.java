@@ -13,12 +13,21 @@ public class Method extends GenericMethod{
     String modifier;
     Type returnType;
     String label;
+    int offset;
 
     public Method(Token modifier, Type typeMethod, Token idMet, Clase c){
         super(idMet.getLexeme(), idMet, c);
         this.label = "lblMet"+idMet.getLexeme()+"@"+c.getName();
         this.modifier = modifier != null ? modifier.getLexeme() : null;
         this.returnType = typeMethod;
+    }
+
+    public int getOffset(){
+        return this.offset;
+    }
+
+    public void setOffset(int i){
+        this.offset = i;
     }
 
     public boolean isAbstract(){ return (modifier != null && modifier.equals("abstract")); }
@@ -40,6 +49,8 @@ public class Method extends GenericMethod{
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isVoid(){ return returnType.getName().equals("void"); }
 
     public void checkWellDefined() throws SemanticException {
         if(isAbstract() && hasBlock){
@@ -102,8 +113,14 @@ public class Method extends GenericMethod{
         for(NodoSentencia sentence: codeBlock){
             sentence.generate();
         }
-        generator.gen("STOREFP ; Alamcena el topo de la pila en el registro");
-        generator.gen("RET "+parameters.size());
+        generator.gen("STOREFP ; Almacena el tope de la pila en el registro");
+
+        int eliminarThis = 0;
+        if( !isStatic() ){
+            eliminarThis = 1;
+        }
+
+        generator.gen("RET "+(parameters.size()+eliminarThis));
         generator.gen("");
     }
 

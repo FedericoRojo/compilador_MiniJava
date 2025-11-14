@@ -12,6 +12,8 @@ public class Constructor extends GenericMethod{
         this.label = "lblConstructor@"+aClass.getName();
     }
 
+    public String getLabel(){ return label; }
+
     public void checkWellDefined() throws SemanticException {
         if( !super.getName().equals(owner.getName()) ){
             throw new SemanticException(super.getToken(), "Error: el constructor no puede tener un nombre diferente a su clase asociada");
@@ -24,15 +26,17 @@ public class Constructor extends GenericMethod{
     }
 
     public void generate(){
-        GeneratorManager generator = GeneratorManager.getInstance();
-        generator.gen(label+":LOADFP ; apila el valor del RA");
-        generator.gen("LOADSP ; apila el valor del registro sp");
-        generator.gen("STOREFP; almacena el tope de la pila en el registro");
-        for(NodoSentencia sentence: codeBlock){
-            sentence.generate();
+        if(codeBlock != null) {
+            GeneratorManager generator = GeneratorManager.getInstance();
+            generator.gen(label + ":LOADFP ; apila el valor del RA");
+            generator.gen("LOADSP ; apila el valor del registro sp");
+            generator.gen("STOREFP; almacena el tope de la pila en el registro");
+            for (NodoSentencia sentence : codeBlock) {
+                sentence.generate();
+            }
+            generator.gen("STOREFP ; Alamcena el topo de la pila en el registro");
+            generator.gen("RET " + (parameters.size()+1));
+            generator.gen("");
         }
-        generator.gen("STOREFP ; Alamcena el topo de la pila en el registro");
-        generator.gen("RET "+parameters.size());
-        generator.gen("");
     }
 }

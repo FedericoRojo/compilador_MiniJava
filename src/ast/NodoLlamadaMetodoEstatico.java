@@ -12,6 +12,7 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
     Clase clase;
     Token className;
     String label;
+    Method myOwnData;
 
     public NodoLlamadaMetodoEstatico(Token methodName, List<NodoExpresion> list, Token className) throws SemanticException {
         super(methodName);
@@ -38,6 +39,8 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
 
         checkParametersAndArguments(method);
 
+        myOwnData = method;
+
         if(encadenado != null){
             if(method.getReturnType() instanceof PrimitiveType){
                 throw new SemanticException(encadenado.getToken(), "No se puede acceder a miembros de un tipo primitivo");
@@ -53,14 +56,20 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
 
             if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
                 encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
+                encadenadoLlamadaMetodo.setLeftChain(this);
             }
             if(encadenado instanceof NodoVar encadenadoNodoVar){
                 encadenadoNodoVar.setClassOfMyLeftChain(c);
+                encadenadoNodoVar.setLeftChain(this);
             }
 
             return encadenado.check();
         }
         return method.getReturnType();
+    }
+
+    public Method getAssociatedMethod(){
+        return myOwnData;
     }
 
     private void checkParametersAndArguments(Method method) throws SemanticException {
@@ -79,10 +88,18 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
 
     public void generate(){
         GeneratorManager generator = GeneratorManager.getInstance();
+        if(calledMethodHasReturn()){
+            generator.gen("RMEM 1; valor de retorno");
+        }
         for(NodoExpresion e: argumentos){
             e.generate();
         }
         generator.gen("PUSH "+label+"; apila el metodo");
         generator.gen("CALL ; Llama al metodo en el tope de la pila");
     }
+
+    public boolean calledMethodHasReturn(){
+        return !myOwnData.getReturnType().getName().equals("void");
+    }
+
 }

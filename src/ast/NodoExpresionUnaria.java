@@ -5,6 +5,7 @@ import model.BooleanType;
 import model.IntType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoExpresionUnaria extends NodoExpresion {
     NodoOperando operando;
@@ -39,6 +40,26 @@ public class NodoExpresionUnaria extends NodoExpresion {
 
 
     public void generate(){
-
+        GeneratorManager generator = GeneratorManager.getInstance();
+        operando.generate();
+        switch (operador.getLexeme()){
+            case "+":
+                generator.gen("; + unario no hace nada");
+                break;
+            case "-":
+                generator.gen("NEG");
+                break;
+            case "++":
+                generator.gen("PUSH 1");
+                generator.gen("ADD");
+                break;
+            case "--":
+                generator.gen("PUSH 1");
+                generator.gen("SUB");
+                break;
+            case "!":
+                generator.gen("NOT");
+                break;
+        }
     }
 }

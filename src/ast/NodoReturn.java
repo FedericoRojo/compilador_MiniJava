@@ -5,6 +5,7 @@ import model.Method;
 import model.NullType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoReturn extends NodoSentencia{
     NodoExpresion retorno;
@@ -28,5 +29,15 @@ public class NodoReturn extends NodoSentencia{
     }
 
     public void generate(){
+        if(!metodo.getReturnType().getName().equals("void")){
+            retorno.generate();
+            if(metodo.isStatic()){
+                int offsetMetodoStatico = 2;
+                GeneratorManager.getInstance().gen("STORE "+(metodo.getParameters().size()+offsetMetodoStatico+1));
+            }else{
+                int offsetMetodoDinamico = 3;
+                GeneratorManager.getInstance().gen("STORE "+(metodo.getParameters().size()+offsetMetodoDinamico+1));
+            }
+        }
     }
 }

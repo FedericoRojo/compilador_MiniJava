@@ -3,6 +3,7 @@ package ast;
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 public class NodoThis extends NodoPrimario{
     Type type;
@@ -42,8 +43,10 @@ public class NodoThis extends NodoPrimario{
 
             if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
                 encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
+                encadenadoLlamadaMetodo.setLeftChain(this);
             }
             if(encadenado instanceof NodoVar encadenadoNodoVar){
+                encadenadoNodoVar.setLeftChain(this);
                 encadenadoNodoVar.setClassOfMyLeftChain(c);
             }
 
@@ -53,5 +56,10 @@ public class NodoThis extends NodoPrimario{
     }
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen("LOAD 3");
+        if(encadenado != null){
+            encadenado.generate();
+        }
     }
 }

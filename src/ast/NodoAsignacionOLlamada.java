@@ -1,8 +1,12 @@
 package ast;
 
 import exceptions.SemanticException;
+import model.GenericMethod;
+import model.Parameter;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
+
 import java.util.AbstractMap.SimpleEntry;
 
 public class NodoAsignacionOLlamada extends NodoSentencia {
@@ -12,7 +16,6 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
     public NodoAsignacionOLlamada(){
 
     }
-
 
     public void setLadoIzquierdo(NodoExpresion ladoIzquierdo) {
         this.ladoIzquierdo = ladoIzquierdo;
@@ -61,9 +64,12 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
         if (nodo instanceof NodoPrimario) {
             NodoPrimario primario = (NodoPrimario) nodo;
             if (primario.encadenado == null){
-                if (primario instanceof NodoVar){
+                if (primario instanceof NodoVar primarioAsignable){
+                    primarioAsignable.setEsAsignable();
                     return true;
-                } else {
+                }else if(nodo instanceof NodoExpresionParentizada expresionParentizada){
+                    return esEncadenamientoQueTerminaEnVariable(expresionParentizada.exp);
+                }else {
                     return false;
                 }
             }else {
@@ -76,9 +82,31 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
     public void generate(){
         if(ladoDerecho == null){
             ladoIzquierdo.generate();
+
+            limpiarPilaEnCasoDeQueLaLlamadaRetorneAlgoQueNoSeUsa();
         }else{
-            //ACA hay que hacer algoo
+            ladoDerecho.generate();
+            ladoIzquierdo.generate();
+        }
+
+    }
+
+    private void limpiarPilaEnCasoDeQueLaLlamadaRetorneAlgoQueNoSeUsa(){
+        if(ladoIzquierdo instanceof NodoPrimario leftNodoPrimario){
+            NodoPrimario nodoPrimario = leftNodoPrimario.terminoEnLlamadaAMetodo();
+            if(  esLlamadaMetodoYEsVoid(nodoPrimario) || esLlamadaMetodoEstaticoYEsVoid(nodoPrimario)){
+                    GeneratorManager.getInstance().gen("POP");
+            }
         }
     }
+
+    private boolean esLlamadaMetodoYEsVoid(NodoPrimario nodoPrimario){
+        return (nodoPrimario instanceof NodoLlamadaMetodo nodoLlamadaMetodo && !nodoLlamadaMetodo.getAssociatedMethod().isVoid());
+    }
+
+    private boolean esLlamadaMetodoEstaticoYEsVoid(NodoPrimario nodoPrimario){
+        return (nodoPrimario instanceof NodoLlamadaMetodoEstatico nodoLlamadaMetodoEstatico && !nodoLlamadaMetodoEstatico.getAssociatedMethod().isVoid());
+    }
+
 
 }

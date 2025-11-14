@@ -5,6 +5,7 @@ import model.BooleanType;
 import model.IntType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoExpresionBinaria extends NodoExpresion {
     NodoExpresion ladoIzquierdo;
@@ -84,6 +85,57 @@ public class NodoExpresionBinaria extends NodoExpresion {
 
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        ladoDerecho.generate();
+        ladoIzquierdo.generate();
+        switch (operador.getLexeme()){
+            case "+":
+                generator.gen("ADD");
+                break;
+            case "-":
+                generator.gen("SWAP");
+                generator.gen("SUB");
+                break;
+            case "*":
+                generator.gen("MUL");
+                break;
+            case "/":
+                generator.gen("SWAP");
+                generator.gen("DIV");
+                break;
+            case "%":
+                generator.gen("SWAP");
+                generator.gen("MOD");
+                break;
+            case "<":
+                generator.gen("SWAP");
+                generator.gen("LT");
+                break;
+            case "<=":
+                generator.gen("SWAP");
+                generator.gen("LE");
+                break;
+            case ">":
+                generator.gen("SWAP");
+                generator.gen("GT");
+                break;
+            case ">=":
+                generator.gen("SWAP");
+                generator.gen("GE");
+                break;
+            case "&&":
+                generator.gen("AND");
+                break;
+            case "||":
+                generator.gen("OR");
+                break;
+            case "==":
+                generator.gen("EQ");
+                break;
+            case "!=":
+                generator.gen("NE");
+                break;
+        }
 
     }
 }

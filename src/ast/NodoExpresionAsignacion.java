@@ -21,6 +21,7 @@ public class NodoExpresionAsignacion extends NodoExpresion{
         }
 
         Type tipoIzquierdo = ladoIzquierdo.check();
+
         Type tipoDerecho = ladoDerecho.check();
 
         tipoIzquierdo.esCompatible(tipoDerecho, token);
@@ -33,9 +34,12 @@ public class NodoExpresionAsignacion extends NodoExpresion{
         if (nodo instanceof NodoPrimario) {
             NodoPrimario primario = (NodoPrimario) nodo;
             if (primario.encadenado == null){
-                if (primario instanceof NodoVar){
+                if (primario instanceof NodoVar primarioAsignable){
+                    primarioAsignable.setEsAsignable();
                     return true;
-                } else {
+                }else if(nodo instanceof NodoExpresionParentizada expresionParentizada){
+                    return esEncadenamientoQueTerminaEnVariable(expresionParentizada.exp);
+                }else {
                     return false;
                 }
             }else {
@@ -46,6 +50,8 @@ public class NodoExpresionAsignacion extends NodoExpresion{
     }
 
     public void generate(){
-
+        ladoDerecho.generate();
+        ladoIzquierdo.generate();
+        //Aca falta algo para que duplique el resultado, sino asigno pero me como el resultado
     }
 }

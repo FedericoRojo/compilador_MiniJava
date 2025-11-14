@@ -3,14 +3,15 @@ package ast;
 import TablaSimbolo.TablaSimbolo;
 import exceptions.SemanticException;
 import model.*;
+import sourcemanager.GeneratorManager;
 
 public class NodoVar extends NodoPrimario{
     Clase inWichClassIsDeclared;
     Clase classOfMyLeftChain;
+    NodoExpresion leftChain;
     GenericMethod method;
     Bloque bloque;
     VarGeneral data;
-
 
     public NodoVar(Token tk, Clase c, GenericMethod m, Bloque b){
         super(tk);
@@ -19,8 +20,14 @@ public class NodoVar extends NodoPrimario{
         this.bloque = b;
     }
 
+    public VarGeneral getData(){ return this.data; }
+
     public void setClassOfMyLeftChain(Clase c){
         this.classOfMyLeftChain = c;
+    }
+
+    public void setLeftChain(NodoExpresion exp){
+        this.leftChain = exp;
     }
 
     @Override
@@ -36,8 +43,10 @@ public class NodoVar extends NodoPrimario{
             }
             if (varLocalType == null) {
                 Parameter p = method.searchVarInParameters(token);
-                varLocalType = p.getType();
-                data = p;
+                if(p != null) {
+                    varLocalType = p.getType();
+                    data = p;
+                }
             }
             if (varLocalType == null) {
                 Attribute attribute = inWichClassIsDeclared.existeVariable(token);
@@ -77,9 +86,11 @@ public class NodoVar extends NodoPrimario{
             }
             if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
                 encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
+                encadenadoLlamadaMetodo.setLeftChain(this);
             }
             if(encadenado instanceof NodoVar encadenadoNodoVar){
                 encadenadoNodoVar.setClassOfMyLeftChain(c);
+                encadenadoNodoVar.setLeftChain(this);
             }
             varLocalType = encadenado.check();
         }
@@ -88,6 +99,61 @@ public class NodoVar extends NodoPrimario{
     }
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
 
+        if(leftChain == null) {
+            if (data instanceof NodoVarLocal dataVarLocal) {
+                if (esAsignable) {
+                    // x = expresion
+                    String offset = dataVarLocal.getOffset() == 0 ? "0" : "-" + dataVarLocal.getOffset();
+                    generator.gen("LOAD " + offset);
+                    generator.gen("STORE " + offset);
+                } else {
+                    // x.algo
+                    String offset = dataVarLocal.getOffset() == 0 ? "0" : "-" + dataVarLocal.getOffset();
+                    generator.gen("LOAD " + offset);
+                }
+
+            } else if (data instanceof Attribute dataAttribute) {
+
+                if (esAsignable) {
+                    generator.gen("LOAD 3 ; cargo el THIS");
+                    generator.gen("SWAP");
+                    generator.gen("STOREREF " + dataAttribute.getOffset());
+                } else {
+                    generator.gen("LOAD 3 ; cargo el THIS");
+                    generator.gen("LOADREF " + dataAttribute.getOffset());
+                }
+
+            } else if (data instanceof Parameter dataParameter) {
+                int offsetRegistroDeActivacion = 3;
+                if( (method instanceof Method methodM && methodM.isStatic()) ) {
+                        offsetRegistroDeActivacion = 2;
+                }
+
+                if (esAsignable) {
+                    int offsetParam = (dataParameter.getTotalParamsSize() + offsetRegistroDeActivacion - dataParameter.getOffset());
+                    generator.gen("STORE " + offsetParam);
+                } else {
+                    int offsetParam = (dataParameter.getTotalParamsSize() + offsetRegistroDeActivacion - dataParameter.getOffset());
+                    generator.gen("LOAD " + offsetParam);
+                }
+
+            }
+        }else{
+            if (data instanceof Attribute dataAttribute) {
+
+                if (esAsignable) {
+                    generator.gen("SWAP");
+                    generator.gen("STOREREF " + dataAttribute.getOffset());
+                } else {
+                    generator.gen("LOADREF " + dataAttribute.getOffset());
+                }
+
+            }
+        }
+        if(encadenado != null){
+            encadenado.generate();
+        }
     }
 }

@@ -10,6 +10,8 @@ import java.util.List;
 
 public class NodoLlamadaConstructor extends NodoPrimario{
     List<NodoExpresion> argumentos;
+    Clase claseAsociadaConstructor;
+    String labelConstructor;
 
     public NodoLlamadaConstructor(Token tk, List<NodoExpresion> list){
         super(tk);
@@ -18,11 +20,14 @@ public class NodoLlamadaConstructor extends NodoPrimario{
 
     @Override
     public Type check() throws SemanticException {
-        Clase claseAsociadaConstructor = TablaSimbolo.getInstance().getClassByString(super.token.getLexeme());
+        this.claseAsociadaConstructor = TablaSimbolo.getInstance().getClassByString(super.token.getLexeme());
+
 
         if(claseAsociadaConstructor == null ){
             throw new SemanticException(token, "Se quiere llamar al constructor  "+token.getLexeme()+" pero no existe una clase con ese nombre");
         }
+
+        this.labelConstructor = claseAsociadaConstructor.getConstructor().getLabel();
 
         checkParametersAndArguments(claseAsociadaConstructor);
 
@@ -40,9 +45,11 @@ public class NodoLlamadaConstructor extends NodoPrimario{
 
             if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
                 encadenadoLlamadaMetodo.setClassOfMyLeftChain(claseAsociadaConstructor);
+                encadenadoLlamadaMetodo.setLeftChain(this);
             }
             if(encadenado instanceof NodoVar encadenadoNodoVar){
                 encadenadoNodoVar.setClassOfMyLeftChain(claseAsociadaConstructor);
+                encadenadoNodoVar.setLeftChain(this);
             }
             return encadenado.check();
         }
@@ -65,5 +72,20 @@ public class NodoLlamadaConstructor extends NodoPrimario{
 
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
+        generator.gen("RMEM 1; lugar para el retorno de malloc");
+        generator.gen("PUSH "+(claseAsociadaConstructor.getAttributes().size()+1)+" ; tamaño del CIR");
+        generator.gen("PUSH simple_malloc");
+        generator.gen("CALL ; llama malloc para hacer lugar en el heap");
+        generator.gen("DUP");
+        generator.gen("PUSH "+claseAsociadaConstructor.getLabel());
+        generator.gen("STOREREF 0");
+        generator.gen("DUP");
+        for(NodoExpresion e: argumentos){
+            e.generate();
+            generator.gen("SWAP");
+        }
+        generator.gen("PUSH "+labelConstructor);
+        generator.gen("CALL");
     }
 }
