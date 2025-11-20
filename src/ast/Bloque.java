@@ -27,6 +27,14 @@ public class Bloque extends NodoSentencia {
         }
     }
 
+    public int getContadorOffsetVariables(){
+        return contadorOffsetVariables;
+    }
+
+    public void setContadorOffsetVariables(int i){
+        this.contadorOffsetVariables = i;
+    }
+
     public void setParent(Bloque p){
         this.parent = p;
     }
@@ -43,8 +51,12 @@ public class Bloque extends NodoSentencia {
                 throw new SemanticException(varLocal.getToken(), "La variable ya fue declarada en un bloque contenedor");
             }
 
+            if(parent != null && contadorOffsetVariables == 0){
+                this.contadorOffsetVariables = parent.getContadorOffsetVariables();
+            }
+
             varLocal.setOffset(contadorOffsetVariables);
-            contadorOffsetVariables++;
+            this.contadorOffsetVariables++;
             variables.add(varLocal);
         }
         sentencias.add(s);
@@ -109,11 +121,20 @@ public class Bloque extends NodoSentencia {
     }
 
     public void generate(){
+
+        GeneratorManager generator = GeneratorManager.getInstance();
         for(NodoSentencia sentence: sentencias){
+            if(sentence instanceof NodoReturn){
+                generator.gen("FMEM "+variables.size());
+            }
             sentence.generate();
         }
-        GeneratorManager generator = GeneratorManager.getInstance();
         generator.gen("FMEM "+variables.size());
+
+        /*
+        if(parent != null){
+            parent.setContadorOffsetVariables( parent.getContadorOffsetVariables() );
+        }*/
     }
 
 }

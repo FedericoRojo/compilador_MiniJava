@@ -29,15 +29,25 @@ public class NodoReturn extends NodoSentencia{
     }
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
         if(!metodo.getReturnType().getName().equals("void")){
             retorno.generate();
             if(metodo.isStatic()){
                 int offsetMetodoStatico = 2;
-                GeneratorManager.getInstance().gen("STORE "+(metodo.getParameters().size()+offsetMetodoStatico+1));
+                generator.gen("STORE "+(metodo.getParameters().size()+offsetMetodoStatico+1));
             }else{
                 int offsetMetodoDinamico = 3;
-                GeneratorManager.getInstance().gen("STORE "+(metodo.getParameters().size()+offsetMetodoDinamico+1));
+                generator.gen("STORE "+(metodo.getParameters().size()+offsetMetodoDinamico+1));
             }
+
+            generator.gen("STOREFP ; Almacena el tope de la pila en el registro");
+
+            int eliminarThis = 0;
+            if( !metodo.isStatic() ){
+                eliminarThis = 1;
+            }
+
+            generator.gen("RET "+(metodo.getParameters().size()+eliminarThis));
         }
     }
 }

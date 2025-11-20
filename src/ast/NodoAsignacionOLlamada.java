@@ -97,8 +97,18 @@ public class NodoAsignacionOLlamada extends NodoSentencia {
             if(  esLlamadaMetodoYEsVoid(nodoPrimario) || esLlamadaMetodoEstaticoYEsVoid(nodoPrimario)){
                     GeneratorManager.getInstance().gen("POP");
             }
+            esLlamadaAConstructorSinEncadenado(leftNodoPrimario);
         }
     }
+
+    private void esLlamadaAConstructorSinEncadenado(NodoPrimario leftNodoPrimario){
+        if(leftNodoPrimario instanceof NodoLlamadaConstructor nodoLlamadaConstructor){
+            if(nodoLlamadaConstructor.encadenado == null) {
+                GeneratorManager.getInstance().gen("POP");
+            }
+        }
+    }
+
 
     private boolean esLlamadaMetodoYEsVoid(NodoPrimario nodoPrimario){
         return (nodoPrimario instanceof NodoLlamadaMetodo nodoLlamadaMetodo && !nodoLlamadaMetodo.getAssociatedMethod().isVoid());

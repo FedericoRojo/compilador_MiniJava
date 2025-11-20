@@ -23,7 +23,6 @@ public class Main {
 
         try{
             String fileName = args[0];
-            //String fileName = "src/test/ejemplo.txt";
             String outFileName = args[1];
 
 

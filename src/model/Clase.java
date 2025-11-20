@@ -188,7 +188,7 @@ public class Clase {
         return this.getName().equals("Object");
     }
 
-    public void consolidateMethods() throws SemanticException {
+    public void consolidateMethodsOriginal() throws SemanticException {
         if(!this.consolidatedMethods && !isObjectClass()) {
             Clase currentParent = getParent();
             if (currentParent != null) {
@@ -206,6 +206,43 @@ public class Clase {
                     }
                 }
 
+            }
+            consolidatedMethods = true;
+        }
+    }
+
+    public void consolidateMethods() throws SemanticException {
+        if(!this.consolidatedMethods && !isObjectClass()) {
+            Clase currentParent = getParent();
+            if (currentParent != null) {
+                currentParent.consolidateMethods();
+                checkMethods();
+
+                LinkedHashMap<String, Method> consolidatedVT = new LinkedHashMap<>();
+                int nextFreeOffset = 1;
+
+
+                for (Method mParent : currentParent.getMethods().values()) {
+                    Method mActual = this.methods.get(mParent.getName());
+                    if (mActual == null) {
+                        handleInheritedMethod(mParent, this.methods);
+                        consolidatedVT.put(mParent.getName(), mParent);
+                    } else {
+                        handleOverridenMethod(mActual, mParent);
+                        mActual.setOffset(mParent.getOffset());
+                        consolidatedVT.put(mActual.getName(), mActual);
+                    }
+                    nextFreeOffset = mParent.getOffset() + 1;
+                }
+
+                for (Method mChild : this.orderedMethods) {
+                    if (!consolidatedVT.containsKey(mChild.getName())) {
+                        mChild.setOffset(nextFreeOffset);
+                        consolidatedVT.put(mChild.getName(), mChild);
+                        nextFreeOffset++;
+                    }
+                }
+                this.methods = consolidatedVT;
             }
             consolidatedMethods = true;
         }
@@ -231,11 +268,7 @@ public class Clase {
         if(mParent.isAbstract()){
             if( !isAbstractClass() ){
                 throw new SemanticException(token, "Error: la clase "+this.getName()+" es concreta y no redefine un metodo abstracto heredado");
-            }else{
-                actualMethods.put(mParent.getName(), mParent);
             }
-        }else{
-            actualMethods.put(mParent.getName(), mParent);
         }
     }
 
@@ -270,11 +303,11 @@ public class Clase {
 
 
     public void checkMethods() throws SemanticException {
-
+        /*
         Clase parent = getParent();
         if(parent != null){
             setLastMethodOffset(parent.getLastMethodOffset());
-        }
+        }*/
 
         for(Method m: orderedMethods){
             if(m.isAbstract()){
@@ -284,8 +317,8 @@ public class Clase {
             }
             m.checkWellDefined();
 
-            m.setOffset(lastMethodOffset);
-            setLastMethodOffset(lastMethodOffset+1);
+            //m.setOffset(lastMethodOffset);
+            //setLastMethodOffset(lastMethodOffset+1);
         }
     }
 

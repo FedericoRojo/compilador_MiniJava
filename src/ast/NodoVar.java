@@ -106,7 +106,6 @@ public class NodoVar extends NodoPrimario{
                 if (esAsignable) {
                     // x = expresion
                     String offset = dataVarLocal.getOffset() == 0 ? "0" : "-" + dataVarLocal.getOffset();
-                    generator.gen("LOAD " + offset);
                     generator.gen("STORE " + offset);
                 } else {
                     // x.algo

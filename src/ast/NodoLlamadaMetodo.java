@@ -125,6 +125,9 @@ public class NodoLlamadaMetodo extends NodoPrimario{
         }else{
             dynamicMethodCall();
         }
+        if(encadenado != null){
+            encadenado.generate();
+        }
         generator.gen("");
     }
 
@@ -138,6 +141,11 @@ public class NodoLlamadaMetodo extends NodoPrimario{
 
     public void staticMethodCall(){
         GeneratorManager generator = GeneratorManager.getInstance();
+
+        if(classOfMyLeftChain != null){
+            generator.gen("POP");
+        }
+
         if(calledMethodHasReturn()){
             generator.gen("RMEM 1; valor de retorno");
         }

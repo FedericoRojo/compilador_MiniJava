@@ -3,6 +3,7 @@ package ast;
 import exceptions.SemanticException;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoExpresionAsignacion extends NodoExpresion{
     NodoExpresion ladoIzquierdo;
@@ -50,8 +51,9 @@ public class NodoExpresionAsignacion extends NodoExpresion{
     }
 
     public void generate(){
+        GeneratorManager generator = GeneratorManager.getInstance();
         ladoDerecho.generate();
+        generator.gen("DUP");
         ladoIzquierdo.generate();
-        //Aca falta algo para que duplique el resultado, sino asigno pero me como el resultado
     }
 }

@@ -34,13 +34,6 @@ public class NodoThis extends NodoPrimario{
                 throw new SemanticException(encadenado.getToken(), "La variable "+getToken().getLexeme()+" es de un tipo que no tiene ni metodo ni atributo con nombre "+encadenado.getToken().getLexeme());
             }
 
-            if( encadenado instanceof NodoLlamadaMetodo nodoLlamadaMetodo){
-                Method m = c.getMethod(nodoLlamadaMetodo.getToken());
-                if(m.isStatic()){
-                    throw new SemanticException(encadenado.getToken(), "No se puede llamar a un metodo estatico con this");
-                }
-            }
-
             if( encadenado instanceof NodoLlamadaMetodo encadenadoLlamadaMetodo){
                 encadenadoLlamadaMetodo.setClassOfMyLeftChain(c);
                 encadenadoLlamadaMetodo.setLeftChain(this);

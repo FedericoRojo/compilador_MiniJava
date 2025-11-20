@@ -46,13 +46,13 @@ public class NodoIf extends NodoSentencia{
             generator.gen("JUMP "+lblFinElse);
             generator.gen(lblInicioElse+": NOP");
             sentenciaElse.generate();
-            generator.gen(lblFinElse+" NOP");
+            generator.gen(lblFinElse+": NOP");
         }else{
             condicion.generate();
-            generator.gen("BF "+lblInicioElse);
+            generator.gen("BF "+lblFinElse);
             sentenciaThen.generate();
             generator.gen("JUMP "+lblFinElse);
-            generator.gen(lblFinElse+" NOP");
+            generator.gen(lblFinElse+": NOP");
         }
     }
 }

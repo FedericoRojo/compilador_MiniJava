@@ -32,8 +32,9 @@ public class NodoWhile extends NodoSentencia{
         GeneratorManager generator = GeneratorManager.getInstance();
         generator.gen(lblWhile+": NOP");
         condicion.generate();
-        generator.gen(lblFinWhile+": NOP");
+        generator.gen("BF "+lblFinWhile);
         sentencias.generate();
+        generator.gen("JUMP "+lblWhile);
         generator.gen(lblFinWhile+": NOP");
     }
 }

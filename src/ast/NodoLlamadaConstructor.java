@@ -87,5 +87,8 @@ public class NodoLlamadaConstructor extends NodoPrimario{
         }
         generator.gen("PUSH "+labelConstructor);
         generator.gen("CALL");
+        if(encadenado != null){
+            encadenado.generate();
+        }
     }
 }

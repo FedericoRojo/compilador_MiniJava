@@ -4,6 +4,7 @@ import exceptions.SemanticException;
 import model.NullType;
 import model.Token;
 import model.Type;
+import sourcemanager.GeneratorManager;
 
 public class NodoNull extends NodoPrimitivo{
 
@@ -18,5 +19,6 @@ public class NodoNull extends NodoPrimitivo{
     }
 
     public void generate(){
+        GeneratorManager.getInstance().gen("PUSH 0");
     }
 }

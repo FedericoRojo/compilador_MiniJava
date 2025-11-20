@@ -19,6 +19,8 @@ public class NodoChar extends NodoPrimitivo{
     }
 
     public void generate(){
-        GeneratorManager.getInstance().gen( "PUSH "+token.getLexeme() );
+        char character = token.getLexeme().substring(1, token.getLexeme().length() - 1).charAt(0);
+        int unicode = character;
+        GeneratorManager.getInstance().gen( "PUSH "+unicode );
     }
 }

@@ -96,6 +96,9 @@ public class NodoLlamadaMetodoEstatico extends NodoPrimario{
         }
         generator.gen("PUSH "+label+"; apila el metodo");
         generator.gen("CALL ; Llama al metodo en el tope de la pila");
+        if(encadenado != null){
+            encadenado.generate();
+        }
     }
 
     public boolean calledMethodHasReturn(){
